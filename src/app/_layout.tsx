@@ -1,67 +1,23 @@
-import { Tabs } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Stack, ThemeProvider, DarkTheme, DefaultTheme } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { AppThemeProvider, appFont, useAppTheme } from '../theme/app-theme';
+import { ThemeButton } from '../components/theme-button';
 
+function Navigation() {
+  const { colors, isDark } = useAppTheme();
+  const base = isDark ? DarkTheme : DefaultTheme;
+  return <ThemeProvider value={{ ...base, colors: { ...base.colors, background: colors.background, card: colors.surface, text: colors.text, border: colors.border, primary: colors.primary } }}>
+    <StatusBar style={isDark ? 'light' : 'dark'} />
+    <Stack screenOptions={{ headerStyle: { backgroundColor: colors.surface }, headerTintColor: colors.text,
+      headerTitleStyle: { fontWeight: '700', fontFamily: appFont }, headerShadowVisible: false,
+      contentStyle: { backgroundColor: colors.background }, headerRight: () => <ThemeButton /> }}>
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="ocorrencias/[id]" options={{ title: 'Detalhes da ocorrência' }} />
+      <Stack.Screen name="appearance" options={{ title: 'Aparência', headerRight: () => null }} />
+    </Stack>
+  </ThemeProvider>;
+}
 export default function RootLayout() {
-  return (
-    <SafeAreaProvider>
-      <StatusBar style="dark" />
-
-      <Tabs
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: "#FFFFFF",
-          },
-          headerTintColor: "#183D35",
-          headerTitleStyle: {
-            fontWeight: "700",
-          },
-          headerShadowVisible: false,
-          tabBarActiveTintColor: "#176B52",
-          tabBarInactiveTintColor: "#52625D",
-          tabBarStyle: {
-            backgroundColor: "#FFFFFF",
-            borderTopColor: "#DCE5DF",
-          },
-          tabBarLabelStyle: {
-            fontSize: 13,
-            fontWeight: "600",
-          },
-          tabBarIcon: () => null,
-          tabBarIconStyle: {
-            display: "none",
-          },
-          sceneStyle: {
-            backgroundColor: "#F4F7F4",
-          },
-        }}
-      >
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: "Bairro em Dia",
-            tabBarLabel: "Início",
-            tabBarAccessibilityLabel: "Abrir início",
-          }}
-        />
-
-        <Tabs.Screen
-          name="explore"
-          options={{
-            title: "Ocorrências",
-            tabBarLabel: "Ocorrências",
-            tabBarAccessibilityLabel: "Abrir ocorrências",
-          }}
-        />
-
-        <Tabs.Screen
-          name="ocorrencias/[id]"
-          options={{
-            title: "Detalhes da ocorrência",
-            href: null,
-          }}
-        />
-      </Tabs>
-    </SafeAreaProvider>
-  );
+  return <SafeAreaProvider><AppThemeProvider><Navigation /></AppThemeProvider></SafeAreaProvider>;
 }

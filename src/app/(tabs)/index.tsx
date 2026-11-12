@@ -1,3 +1,4 @@
+import { appFont, useAppTheme, type AppColors } from "../../theme/app-theme";
 import { useRouter } from "expo-router";
 import {
   Pressable,
@@ -11,25 +12,27 @@ import {
 const etapas = [
   {
     numero: "01",
-    titulo: "Registre",
+    titulo: "Encontre sua região",
     descricao:
-      "Informe o problema, o estado, a cidade, o bairro e a localização.",
+      "Busque por estado, cidade ou bairro. Você também pode ver todos os relatos.",
   },
   {
     numero: "02",
-    titulo: "Participe",
+    titulo: "Veja o que aconteceu",
     descricao:
-      "Confirme os relatos de outros moradores que também afetam você.",
+      "Abra um relato para entender o problema, o endereço e a situação atual.",
   },
   {
     numero: "03",
     titulo: "Acompanhe",
     descricao:
-      "Consulte as mudanças de status e as justificativas registradas no histórico.",
+      "Veja as atualizações em ordem, com a data e o motivo de cada mudança.",
   },
 ];
 
 export default function InicioScreen() {
+  const { colors } = useAppTheme();
+  const styles = makeStyles(colors);
   const router = useRouter();
   const { width, fontScale } = useWindowDimensions();
 
@@ -41,7 +44,7 @@ export default function InicioScreen() {
       contentContainerStyle={styles.scrollContent}
     >
       <View style={[styles.content, telaAmpla && styles.contentAmplo]}>
-        <View style={[styles.hero, telaAmpla && styles.heroAmplo]}>
+        <View style={styles.hero}>
           <View style={styles.introduction}>
             <Text style={styles.eyebrow}>CUIDADO QUE COMEÇA PERTO</Text>
 
@@ -49,30 +52,12 @@ export default function InicioScreen() {
               accessibilityRole="header"
               style={[styles.title, telaAmpla && styles.titleAmplo]}
             >
-              Sua cidade, seu bairro, nossa atenção.
+              Seu bairro merece atenção.
             </Text>
 
             <Text style={styles.description}>
-              Registre problemas nos espaços públicos e acompanhe as
-              atualizações junto com outros moradores. De qualquer bairro, em
-              qualquer cidade do Brasil.
+              Saiba o que acontece perto de você e acompanhe os problemas dos espaços públicos, em qualquer cidade do Brasil.
             </Text>
-          </View>
-
-          <View style={[styles.actions, telaAmpla && styles.actionsAmplo]}>
-            <View style={styles.regionCard}>
-              <Text style={styles.cardLabel}>ESCOLHA SUA REGIÃO</Text>
-
-              <Text style={styles.regionTitle} accessibilityRole="header">
-                Mais perto do que importa
-              </Text>
-
-              <Text style={styles.cardDescription}>
-                Busque por estado, cidade e bairro ou consulte todos os
-                registros da comunidade.
-              </Text>
-            </View>
-
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Consultar ocorrências por região"
@@ -83,8 +68,24 @@ export default function InicioScreen() {
                 pressed && styles.pressed,
               ]}
             >
-              <Text style={styles.primaryButtonText}>Explorar ocorrências</Text>
+              <Text style={styles.primaryButtonText}>Buscar ocorrências →</Text>
             </Pressable>
+          </View>
+
+          <View style={styles.actions}>
+            <View style={styles.regionCard}>
+              <Text style={styles.cardLabel}>UM OLHAR PARA A COMUNIDADE</Text>
+
+              <Text style={styles.regionTitle} accessibilityRole="header">
+                Da sua rua à sua cidade
+              </Text>
+
+              <Text style={styles.cardDescription}>
+                Iluminação, calçadas, buracos e lixo acumulado. Os relatos ficam reunidos em um só lugar.
+              </Text>
+            </View>
+
+
           </View>
         </View>
 
@@ -93,11 +94,11 @@ export default function InicioScreen() {
             Como funciona
           </Text>
 
-          <View style={[styles.steps, telaAmpla && styles.stepsAmplo]}>
+          <View style={styles.steps}>
             {etapas.map((etapa) => (
               <View
                 key={etapa.numero}
-                style={[styles.stepCard, telaAmpla && styles.stepCardAmplo]}
+                style={styles.stepCard}
               >
                 <Text style={styles.stepNumber}>{etapa.numero}</Text>
 
@@ -113,10 +114,10 @@ export default function InicioScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors: AppColors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F4F7F4",
+    backgroundColor: colors.background,
   },
   scrollContent: {
     flexGrow: 1,
@@ -132,11 +133,16 @@ const styles = StyleSheet.create({
   },
   contentAmplo: {
     paddingHorizontal: 40,
-    paddingTop: 64,
+    paddingTop: 40,
     paddingBottom: 64,
-    gap: 56,
+    gap: 36,
   },
   hero: {
+    padding: 28,
+    borderRadius: 20,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
     gap: 28,
   },
   heroAmplo: {
@@ -145,29 +151,28 @@ const styles = StyleSheet.create({
     gap: 48,
   },
   introduction: {
-    flex: 1,
     minWidth: 0,
     gap: 20,
   },
   eyebrow: {
-    color: "#176B52",
-    fontSize: 12,
+    color: colors.primary,
+    fontFamily: appFont, fontSize: 12,
     fontWeight: "700",
     letterSpacing: 1.5,
   },
   title: {
-    color: "#183D35",
-    fontSize: 34,
+    color: colors.text,
+    fontFamily: appFont, fontSize: 34,
     lineHeight: 42,
-    fontWeight: "800",
+    fontWeight: "700",
   },
   titleAmplo: {
-    fontSize: 46,
+    fontFamily: appFont, fontSize: 44,
     lineHeight: 55,
   },
   description: {
-    color: "#52625D",
-    fontSize: 16,
+    color: colors.muted,
+    fontFamily: appFont, fontSize: 16,
     lineHeight: 26,
   },
   actions: {
@@ -177,40 +182,41 @@ const styles = StyleSheet.create({
     width: 340,
   },
   regionCard: {
-    backgroundColor: "#E3EEE6",
-    borderRadius: 20,
+    backgroundColor: colors.tint,
+    borderRadius: 16,
     padding: 24,
     gap: 12,
   },
   cardLabel: {
-    color: "#365B4C",
-    fontSize: 12,
+    color: colors.tintText,
+    fontFamily: appFont, fontSize: 12,
     fontWeight: "700",
     letterSpacing: 1,
   },
   regionTitle: {
-    color: "#183D35",
-    fontSize: 26,
+    color: colors.text,
+    fontFamily: appFont, fontSize: 26,
     lineHeight: 34,
     fontWeight: "700",
   },
   cardDescription: {
-    color: "#365B4C",
-    fontSize: 14,
+    color: colors.tintText,
+    fontFamily: appFont, fontSize: 14,
     lineHeight: 23,
   },
   primaryButton: {
+    alignSelf: "flex-start",
     minHeight: 56,
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderRadius: 16,
-    backgroundColor: "#176B52",
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
   primaryButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
+    color: colors.onPrimary,
+    fontFamily: appFont, fontSize: 16,
     fontWeight: "700",
     textAlign: "center",
   },
@@ -221,11 +227,13 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   sectionTitle: {
-    color: "#183D35",
-    fontSize: 24,
+    color: colors.text,
+    fontFamily: appFont, fontSize: 24,
     fontWeight: "700",
   },
   steps: {
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 16,
   },
   stepsAmplo: {
@@ -233,30 +241,33 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
   },
   stepCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 20,
+    flexGrow: 1,
+    flexBasis: 260,
+    minWidth: 0,
+    backgroundColor: colors.surface,
+    borderRadius: 16,
     padding: 24,
     gap: 12,
     borderWidth: 1,
-    borderColor: "#DCE5DF",
+    borderColor: colors.border,
   },
   stepCardAmplo: {
     flex: 1,
     minWidth: 0,
   },
   stepNumber: {
-    color: "#176B52",
-    fontSize: 25,
-    fontWeight: "800",
+    color: colors.primary,
+    fontFamily: appFont, fontSize: 25,
+    fontWeight: "700",
   },
   stepTitle: {
-    color: "#183D35",
-    fontSize: 18,
+    color: colors.text,
+    fontFamily: appFont, fontSize: 18,
     fontWeight: "700",
   },
   stepDescription: {
-    color: "#52625D",
-    fontSize: 15,
+    color: colors.muted,
+    fontFamily: appFont, fontSize: 15,
     lineHeight: 24,
   },
 });

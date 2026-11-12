@@ -1,5 +1,6 @@
+import { appFont, useAppTheme, type AppColors } from "../../theme/app-theme";
 import { Picker } from "@react-native-picker/picker";
-import { useFocusEffect } from "expo-router";
+import { Link, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import {
   ActivityIndicator,
@@ -12,21 +13,24 @@ import {
   View,
 } from "react-native";
 
-import { unidadesFederativas } from "../constants/localidades";
+import { unidadesFederativas } from "../../constants/localidades";
 import {
   listarOcorrencias,
   type FiltrosOcorrencias,
-} from "../services/ocorrencias";
+} from "../../services/ocorrencias";
 import {
   categoriasLabel,
   statusLabel,
   type OcorrenciaResumo,
-} from "../types/ocorrencia";
+} from "../../types/ocorrencia";
 
 export default function OcorrenciasScreen() {
+  const { colors } = useAppTheme();
+  const styles = makeStyles(colors);
   const { width, fontScale } = useWindowDimensions();
   const telaAmpla = width >= 900 && fontScale < 1.5;
 
+  const [moreFilters, setMoreFilters] = useState(false);
   const [uf, setUf] = useState("");
   const [cidade, setCidade] = useState("");
   const [bairro, setBairro] = useState("");
@@ -80,6 +84,8 @@ export default function OcorrenciasScreen() {
       void carregar();
 
       return () => controller.abort();
+    // O contador permite atualizar os resultados mantendo os mesmos filtros.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tentativa, filtrosAplicados]),
   );
 
@@ -123,18 +129,17 @@ export default function OcorrenciasScreen() {
           <Text style={styles.eyebrow}>RELATOS DA COMUNIDADE</Text>
 
           <Text style={styles.title} accessibilityRole="header">
-            De olho na sua região
+            O que acontece perto de você?
           </Text>
 
           <Text style={styles.description}>
-            Encontre ocorrências em bairros de qualquer cidade do Brasil.
-            Escolha uma região ou consulte todos os registros.
+            Busque sua região ou explore os relatos abaixo. Abra uma ocorrência para ver os detalhes e as atualizações.
           </Text>
         </View>
 
         <View style={styles.filtersCard}>
           <Text style={styles.sectionTitle} accessibilityRole="header">
-            Onde você quer acompanhar?
+            Buscar por região
           </Text>
 
           <View style={[styles.fields, telaAmpla && styles.fieldsAmplo]}>
@@ -143,6 +148,7 @@ export default function OcorrenciasScreen() {
 
               <View style={styles.pickerContainer}>
                 <Picker
+                  dropdownIconColor={colors.text}
                   accessibilityLabel="Filtrar por estado"
                   selectedValue={uf}
                   onValueChange={(valor) => alterarUf(String(valor))}
@@ -167,7 +173,7 @@ export default function OcorrenciasScreen() {
               <TextInput
                 accessibilityLabel="Filtrar por cidade"
                 placeholder="Ex.: Campinas"
-                placeholderTextColor="#63756B"
+                placeholderTextColor={colors.subtle}
                 value={cidade}
                 onChangeText={(valor) => {
                   setCidade(valor);
@@ -186,7 +192,7 @@ export default function OcorrenciasScreen() {
               <TextInput
                 accessibilityLabel="Filtrar por bairro"
                 placeholder="Ex.: Centro"
-                placeholderTextColor="#63756B"
+                placeholderTextColor={colors.subtle}
                 value={bairro}
                 onChangeText={setBairro}
                 onSubmitEditing={aplicarFiltros}
@@ -198,23 +204,27 @@ export default function OcorrenciasScreen() {
           </View>
 
           <Text style={styles.helpText}>
-            Os campos são opcionais. Para diferenciar bairros com o mesmo nome,
-            informe também a cidade e o estado. Digite os nomes completos, com
-            os acentos do cadastro.
+            Preencha apenas o que quiser filtrar. Use os nomes completos de cidade e bairro, com os acentos do cadastro.
           </Text>
 
+          <Pressable accessibilityRole="button" accessibilityState={{ expanded: moreFilters }}
+            onPress={() => setMoreFilters(value => !value)} style={styles.refreshButton}>
+            <Text style={styles.secondaryButtonText}>{moreFilters ? '− Ocultar filtros adicionais' : '+ Mais filtros'}{categoria || status ? ' · ativos' : ''}</Text>
+          </Pressable>
+          {moreFilters && (
           <View style={[styles.fields, telaAmpla && styles.fieldsAmplo]}>
             <View style={styles.field}>
               <Text style={styles.label}>Categoria</Text>
 
               <View style={styles.pickerContainer}>
                 <Picker
+                  dropdownIconColor={colors.text}
                   accessibilityLabel="Filtrar por categoria"
                   selectedValue={categoria}
                   onValueChange={(valor) => setCategoria(String(valor))}
                   style={styles.picker}
                 >
-                  <Picker.Item label="Todas as categorias" value="" />
+                  <Picker.Item label="Qualquer categoria" value="" />
                   <Picker.Item label="Iluminação" value="1" />
                   <Picker.Item label="Lixo acumulado" value="2" />
                   <Picker.Item label="Buraco" value="3" />
@@ -224,16 +234,17 @@ export default function OcorrenciasScreen() {
             </View>
 
             <View style={styles.field}>
-              <Text style={styles.label}>Status</Text>
+              <Text style={styles.label}>Situação</Text>
 
               <View style={styles.pickerContainer}>
                 <Picker
+                  dropdownIconColor={colors.text}
                   accessibilityLabel="Filtrar por status"
                   selectedValue={status}
                   onValueChange={(valor) => setStatus(String(valor))}
                   style={styles.picker}
                 >
-                  <Picker.Item label="Todos os status" value="" />
+                  <Picker.Item label="Qualquer situação" value="" />
                   <Picker.Item label="Registrada" value="1" />
                   <Picker.Item label="Em análise" value="2" />
                   <Picker.Item label="Em acompanhamento" value="3" />
@@ -242,6 +253,8 @@ export default function OcorrenciasScreen() {
               </View>
             </View>
           </View>
+
+          )}
 
           <View style={styles.actions}>
             <Pressable
@@ -253,7 +266,7 @@ export default function OcorrenciasScreen() {
                 pressed && styles.pressed,
               ]}
             >
-              <Text style={styles.primaryButtonText}>Aplicar filtros</Text>
+              <Text style={styles.primaryButtonText}>Buscar ocorrências</Text>
             </Pressable>
 
             <Pressable
@@ -265,7 +278,7 @@ export default function OcorrenciasScreen() {
                 pressed && styles.pressed,
               ]}
             >
-              <Text style={styles.secondaryButtonText}>Limpar filtros</Text>
+              <Text style={styles.secondaryButtonText}>Ver todas</Text>
             </Pressable>
           </View>
         </View>
@@ -310,7 +323,7 @@ export default function OcorrenciasScreen() {
           <View style={styles.messageCard}>
             <ActivityIndicator
               size="large"
-              color="#176B52"
+              color={colors.primary}
               accessibilityLabel="Carregando ocorrências"
             />
 
@@ -371,6 +384,18 @@ export default function OcorrenciasScreen() {
                   {" / "}
                   {ocorrencia.uf}
                 </Text>
+
+                <Link
+                  href={{ pathname: "/ocorrencias/[id]", params: { id: ocorrencia.id } }}
+                  asChild
+                >
+                  <Pressable
+                    accessibilityLabel={`Ver detalhes: ${ocorrencia.titulo}`}
+                    style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]}
+                  >
+                    <Text style={styles.secondaryButtonText}>Ver detalhes e atualizações →</Text>
+                  </Pressable>
+                </Link>
               </View>
             ))}
           </View>
@@ -380,10 +405,10 @@ export default function OcorrenciasScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors: AppColors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F4F7F4",
+    backgroundColor: colors.background,
   },
   scrollContent: {
     flexGrow: 1,
@@ -400,33 +425,33 @@ const styles = StyleSheet.create({
     gap: 14,
   },
   eyebrow: {
-    color: "#176B52",
-    fontSize: 12,
+    color: colors.primary,
+    fontFamily: appFont, fontSize: 12,
     fontWeight: "700",
     letterSpacing: 1.5,
   },
   title: {
-    color: "#183D35",
-    fontSize: 30,
+    color: colors.text,
+    fontFamily: appFont, fontSize: 30,
     lineHeight: 38,
-    fontWeight: "800",
+    fontWeight: "700",
   },
   description: {
-    color: "#52625D",
-    fontSize: 16,
+    color: colors.muted,
+    fontFamily: appFont, fontSize: 16,
     lineHeight: 25,
   },
   filtersCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: "#DCE5DF",
-    borderRadius: 20,
+    borderColor: colors.border,
+    borderRadius: 16,
     padding: 20,
-    gap: 20,
+    gap: 14,
   },
   sectionTitle: {
-    color: "#183D35",
-    fontSize: 20,
+    color: colors.text,
+    fontFamily: appFont, fontSize: 20,
     fontWeight: "700",
   },
   fields: {
@@ -444,37 +469,39 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   label: {
-    color: "#183D35",
-    fontSize: 14,
+    color: colors.text,
+    fontFamily: appFont, fontSize: 14,
     fontWeight: "600",
   },
   input: {
-    minHeight: 52,
-    backgroundColor: "#F8FAF8",
+    minHeight: 48,
+    backgroundColor: colors.input,
     borderWidth: 1,
-    borderColor: "#B8C9BE",
+    borderColor: colors.inputBorder,
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 14,
-    color: "#183D35",
-    fontSize: 16,
+    color: colors.text,
+    fontFamily: appFont, fontSize: 16,
   },
   pickerContainer: {
-    backgroundColor: "#F8FAF8",
+    backgroundColor: colors.input,
     borderWidth: 1,
-    borderColor: "#B8C9BE",
+    borderColor: colors.inputBorder,
     borderRadius: 12,
     overflow: "hidden",
   },
   picker: {
+    fontFamily: appFont, fontSize: 16,
+    borderWidth: 0,
     width: "100%",
-    minHeight: 52,
-    color: "#183D35",
-    backgroundColor: "#F8FAF8",
+    minHeight: 48,
+    color: colors.text,
+    backgroundColor: colors.input,
   },
   helpText: {
-    color: "#52625D",
-    fontSize: 13,
+    color: colors.muted,
+    fontFamily: appFont, fontSize: 13,
     lineHeight: 21,
   },
   actions: {
@@ -487,12 +514,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 22,
     paddingVertical: 14,
     borderRadius: 14,
-    backgroundColor: "#176B52",
+    backgroundColor: colors.primary,
     justifyContent: "center",
   },
   primaryButtonText: {
-    color: "#FFFFFF",
-    fontSize: 15,
+    color: colors.onPrimary,
+    fontFamily: appFont, fontSize: 15,
     fontWeight: "700",
     textAlign: "center",
   },
@@ -502,12 +529,12 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: "#B8C9BE",
+    borderColor: colors.inputBorder,
     justifyContent: "center",
   },
   secondaryButtonText: {
-    color: "#176B52",
-    fontSize: 15,
+    color: colors.primary,
+    fontFamily: appFont, fontSize: 15,
     fontWeight: "700",
     textAlign: "center",
   },
@@ -536,29 +563,29 @@ const styles = StyleSheet.create({
   },
   messageCard: {
     padding: 24,
-    borderRadius: 20,
-    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: "#DCE5DF",
+    borderColor: colors.border,
     gap: 16,
   },
   errorTitle: {
-    color: "#9B2929",
-    fontSize: 18,
+    color: colors.danger,
+    fontFamily: appFont, fontSize: 18,
     fontWeight: "700",
   },
   list: {
     gap: 16,
   },
   resultCount: {
-    color: "#52625D",
-    fontSize: 14,
+    color: colors.muted,
+    fontFamily: appFont, fontSize: 14,
   },
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: "#DCE5DF",
-    borderRadius: 20,
+    borderColor: colors.border,
+    borderRadius: 16,
     padding: 24,
     gap: 14,
   },
@@ -568,36 +595,36 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   categoryBadge: {
-    backgroundColor: "#E3EEE6",
+    backgroundColor: colors.tint,
     paddingHorizontal: 12,
     paddingVertical: 7,
     borderRadius: 10,
   },
   categoryText: {
-    color: "#24513F",
-    fontSize: 13,
+    color: colors.tintText,
+    fontFamily: appFont, fontSize: 13,
     fontWeight: "600",
   },
   statusBadge: {
-    backgroundColor: "#EDF1F5",
+    backgroundColor: colors.blue,
     paddingHorizontal: 12,
     paddingVertical: 7,
     borderRadius: 10,
   },
   statusText: {
-    color: "#3E5066",
-    fontSize: 13,
+    color: colors.blueText,
+    fontFamily: appFont, fontSize: 13,
     fontWeight: "600",
   },
   cardTitle: {
-    color: "#183D35",
-    fontSize: 20,
+    color: colors.text,
+    fontFamily: appFont, fontSize: 20,
     lineHeight: 28,
     fontWeight: "700",
   },
   location: {
-    color: "#52625D",
-    fontSize: 15,
+    color: colors.muted,
+    fontFamily: appFont, fontSize: 15,
     lineHeight: 24,
   },
 });
