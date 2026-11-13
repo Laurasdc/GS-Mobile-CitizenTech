@@ -1,56 +1,52 @@
-# Welcome to your Expo app 👋
+# Bairro em Dia — Mobile
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+App em Expo, React Native e TypeScript para consultar problemas nos espaços públicos de bairros de qualquer cidade do Brasil.
 
-## Get started
+## Funcionalidades
 
-1. Install dependencies
+- Listagem pública com filtros de UF, cidade, bairro, categoria e situação.
+- Detalhes, localização, situação atual e histórico de acompanhamento.
+- Temas claro, escuro neutro e do dispositivo, com preferência salva.
+- Cadastro por nome, e-mail e senha; entrar, consultar sua conta e sair.
+- Retorno ao relato após login solicitado para participar.
+- Confirmação “Também sou afetado” vinculada à conta autenticada, sem duplicação e sem confirmar seu próprio relato.
+- Interface adaptável a PC e celular, com labels de acessibilidade e mensagens de carregamento/erro.
 
-   ```bash
-   npm install
-   ```
+A consulta não exige conta. O formulário Mobile para registrar novas ocorrências é a próxima etapa; a API já protege esse cadastro.
 
-2. Start the app
+## Executar
 
-   ```bash
-   npx expo start
-   ```
+Requer Node compatível com Expo SDK 58 e a API C# atualizada, com a migration `AdicionaAutenticacao` aplicada.
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```powershell
+npm install
+npx expo start --clear
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Pressione `w` no terminal do Expo para abrir a versão web. A URL local esperada é `http://localhost:8081`, permitida no CORS e na validação de origem da API.
 
-### Other setup steps
+A API padrão é `http://localhost:5239/api`. Para usar outro endereço, crie `.env.local`:
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+```dotenv
+EXPO_PUBLIC_API_URL=http://SEU_IP_LOCAL:5239/api
+```
 
-## Learn more
+Essa variável é pública e contém somente a URL, nunca senhas/tokens. No iPhone, `localhost` aponta para o próprio aparelho: use o IP do PC, com API acessível na rede e ambos conectados à mesma rede. A URL deve terminar em `/api`. Reinicie o Expo após mudar a variável.
 
-To learn more about developing your project with Expo, look at the following resources:
+## Conta e sessão
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Crie uma conta do **Bairro em Dia** pelo botão Entrar → Criar conta. Ela é independente da conta do Expo. Os usuários antigos de demonstração da API não possuem senha.
 
-## Join the community
+No navegador, a sessão usa cookie HttpOnly e o token não é exposto ao JavaScript nem armazenado no AsyncStorage. No app nativo, o token é salvo no Expo SecureStore. A sessão expira em 8 horas e o logout a revoga na API. A preferência de aparência continua salva ao sair.
 
-Join our community of developers creating universal apps.
+As senhas não são armazenadas pelo app. Não há recuperação de senha, verificação de e-mail ou login social nesta etapa. Alterar status é uma operação do perfil Gestor na API; o cadastro público concede somente o perfil Morador.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Validação
+
+```powershell
+npx tsc --noEmit
+npx expo lint
+npx expo export --platform web
+```
+
+O fluxo web pode ser testado consultando sem login, abrindo um relato de outra pessoa, criando conta, confirmando a ocorrência, recarregando e saindo da conta. O cadastro e o login requerem a API rodando. O SecureStore nativo requer conferência no aparelho.

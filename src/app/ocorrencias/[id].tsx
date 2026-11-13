@@ -11,6 +11,9 @@ import {
     useWindowDimensions,
 } from "react-native";
 
+import { useAuth } from "../../auth/auth-context";
+import { ApiError, solicitarApi } from "../../services/api";
+
 import { obterOcorrencia } from "../../services/ocorrencias";
 import {
     categoriasLabel,
@@ -40,6 +43,10 @@ export default function DetalheOcorrenciaScreen() {
   const { colors } = useAppTheme();
   const styles = makeStyles(colors);
   const router = useRouter();
+  const { user, ready: sessionReady } = useAuth();
+  const [confirmation, setConfirmation] = useState<{ key: string; value: boolean } | null>(null);
+  const [confirmando, setConfirmando] = useState(false);
+  const [participacaoErro, setParticipacaoErro] = useState<string | null>(null);
   const { width, fontScale } = useWindowDimensions();
   const ampla = width >= 960 && fontScale < 1.5;
   const parametros = useLocalSearchParams<{
@@ -97,6 +104,34 @@ export default function DetalheOcorrenciaScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id, tentativa]),
   );
+
+  useFocusEffect(useCallback(() => {
+    const controller = new AbortController();
+    if (!id || !user) return () => controller.abort();
+    solicitarApi<{ confirmada: boolean }>(`/ocorrencias/${encodeURIComponent(id)}/minha-confirmacao`, {
+      autenticado: true, signal: controller.signal,
+    }).then(result => { if (!controller.signal.aborted) setConfirmation({ key: `${id}:${user.id}`, value: result.confirmada }); })
+      .catch(cause => { if (!controller.signal.aborted) setParticipacaoErro(cause instanceof Error ? cause.message : 'Não foi possível verificar sua confirmação.'); });
+    return () => controller.abort();
+  }, [id, user]));
+
+  async function confirmarParticipacao() {
+    if (!id || confirmando) return;
+    if (!user) {
+      router.push({ pathname: '/entrar', params: { returnTo: `/ocorrencias/${id}` } });
+      return;
+    }
+    setConfirmando(true); setParticipacaoErro(null);
+    try {
+      const atualizada = await solicitarApi<OcorrenciaDetalhe>(`/ocorrencias/${encodeURIComponent(id)}/confirmacoes`, { method: 'POST', autenticado: true });
+      setOcorrencia(atualizada); setConfirmation({ key: `${id}:${user.id}`, value: true });
+    } catch (cause) {
+      setParticipacaoErro(cause instanceof Error ? cause.message : 'Não foi possível confirmar agora.');
+      if (cause instanceof ApiError && cause.status === 401) router.push({ pathname: '/entrar', params: { returnTo: `/ocorrencias/${id}` } });
+    } finally { setConfirmando(false); }
+  }
+
+  const confirmada = confirmation?.key === `${id}:${user?.id}` && confirmation.value;
 
   const historico = [...(ocorrencia?.historico ?? [])].sort(
     (a, b) => instante(b.criadoEm) - instante(a.criadoEm),
@@ -193,6 +228,14 @@ export default function DetalheOcorrenciaScreen() {
                       ? "Outro morador confirmou que também é afetado."
                       : "Outros moradores confirmaram que também são afetados."}</Text>
                   <View style={styles.divider} />
+                  {ocorrencia.usuarioId === user?.id ? <Text style={styles.body}>Este relato foi registrado por você.</Text>
+                    : user && confirmada ? <Text accessibilityLiveRegion="polite" style={styles.linkText}>Você já confirmou que também é afetado.</Text>
+                    : <Pressable accessibilityRole="button" disabled={confirmando || !sessionReady}
+                        onPress={() => void confirmarParticipacao()}
+                        style={({ pressed }) => [styles.button, (pressed || confirmando || !sessionReady) && styles.pressed]}>
+                        {confirmando ? <ActivityIndicator color={colors.onPrimary} /> : <Text style={styles.buttonText}>{user ? 'Também sou afetado' : 'Entrar para confirmar'}</Text>}
+                      </Pressable>}
+                  {participacaoErro && <Text accessibilityRole="alert" style={[styles.body, { color: colors.danger }]}>{participacaoErro}</Text>}
                   <Text style={styles.metadata}>Relato registrado em</Text>
                   <Text style={styles.date}>{formatarData(ocorrencia.criadoEm)}</Text>
                 </View>
