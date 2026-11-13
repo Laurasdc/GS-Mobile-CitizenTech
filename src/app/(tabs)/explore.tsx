@@ -1,6 +1,6 @@
 import { appFont, useAppTheme, type AppColors } from "../../theme/app-theme";
 import { Picker } from "@react-native-picker/picker";
-import { Link, useFocusEffect } from "expo-router";
+import { Link, useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import {
   ActivityIndicator,
@@ -26,6 +26,7 @@ import {
 
 export default function OcorrenciasScreen() {
   const { colors } = useAppTheme();
+  const router = useRouter();
   const styles = makeStyles(colors);
   const { width, fontScale } = useWindowDimensions();
   const telaAmpla = width >= 900 && fontScale < 1.5;
@@ -135,6 +136,10 @@ export default function OcorrenciasScreen() {
           <Text style={styles.description}>
             Busque sua região ou explore os relatos abaixo. Abra uma ocorrência para ver os detalhes e as atualizações.
           </Text>
+          <Pressable accessibilityRole="button" onPress={() => router.push('/registrar')}
+            style={({ pressed }) => [styles.primaryButton, { alignSelf: 'flex-start' }, pressed && styles.pressed]}>
+            <Text style={styles.primaryButtonText}>Registrar problema</Text>
+          </Pressable>
         </View>
 
         <View style={styles.filtersCard}>

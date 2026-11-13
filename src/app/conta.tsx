@@ -19,7 +19,8 @@ export default function AccountScreen() {
       <Text accessibilityRole="header" style={styles.title}>Minha conta</Text>
       {!ready ? <ActivityIndicator color={colors.primary} /> : user ? <View style={styles.card}>
         <Text style={styles.title}>{user.nome}</Text><Text style={styles.body}>{user.email}</Text>
-        <Text style={styles.body}>Você está conectado. Já pode participar e confirmar os problemas que também afetam você.</Text>
+        <Text style={styles.body}>Você está conectado. Já pode registrar problemas e confirmar os relatos que também afetam você.</Text>
+        <Pressable accessibilityRole="button" onPress={() => router.push('/registrar')} style={styles.button}><Text style={styles.buttonText}>Registrar problema</Text></Pressable>
         <Pressable accessibilityRole="button" onPress={() => router.replace('/explore')} style={styles.button}><Text style={styles.buttonText}>Explorar ocorrências</Text></Pressable>
         {error && <Text accessibilityRole="alert" style={styles.error}>{error}</Text>}
         <Pressable accessibilityRole="button" disabled={busy} onPress={() => void leave()} style={styles.linkButton}><Text style={styles.link}>{busy ? 'Saindo…' : 'Sair da conta'}</Text></Pressable>

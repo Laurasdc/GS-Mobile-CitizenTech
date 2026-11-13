@@ -29,7 +29,7 @@ export default function LoginScreen() {
       }
       await signIn(email, senha);
       setSenha(''); setConfirmacao('');
-      router.replace(returnPath(returnTo));
+      router.dismissTo(returnPath(returnTo));
     } catch (cause) { setError(cause instanceof Error ? cause.message : 'Não foi possível entrar. Tente novamente.'); }
     finally { setBusy(false); }
   }
@@ -37,10 +37,10 @@ export default function LoginScreen() {
     <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
       <View style={styles.content}>
         <Text style={styles.title} accessibilityRole="header">{creating ? 'Crie sua conta' : 'Que bom ter você aqui'}</Text>
-        <Text style={styles.body}>{returnTo ? 'Entre para participar. Depois você volta ao relato e pode confirmar que também é afetado.' : 'Consultar é livre. Entre para registrar problemas e participar da sua comunidade.'}</Text>
+        <Text style={styles.body}>{returnTo === '/registrar' ? 'Entre para registrar um problema. Depois você volta ao formulário para preencher ou revisar seu relato.' : returnTo ? 'Entre para participar. Depois você volta ao relato e pode confirmar que também é afetado.' : 'Consultar é livre. Entre para registrar problemas e participar da sua comunidade.'}</Text>
         {user ? <View style={styles.card}>
           <Text style={styles.body}>Você já está conectado como {user.nome}.</Text>
-          <Pressable accessibilityRole="button" onPress={() => router.replace(returnPath(returnTo))} style={styles.button}><Text style={styles.buttonText}>Continuar</Text></Pressable>
+          <Pressable accessibilityRole="button" onPress={() => router.dismissTo(returnPath(returnTo))} style={styles.button}><Text style={styles.buttonText}>Continuar</Text></Pressable>
         </View> : <View style={styles.card}>
           {creating && <View style={styles.field}><Text style={styles.label}>Seu nome</Text>
             <TextInput accessibilityLabel="Seu nome" value={nome} onChangeText={setNome} maxLength={100} autoComplete="name" textContentType="name" editable={!busy} style={styles.input} />

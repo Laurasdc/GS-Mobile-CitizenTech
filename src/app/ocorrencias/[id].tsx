@@ -51,6 +51,7 @@ export default function DetalheOcorrenciaScreen() {
   const ampla = width >= 960 && fontScale < 1.5;
   const parametros = useLocalSearchParams<{
     id?: string | string[];
+    registrado?: string;
   }>();
 
   const id = Array.isArray(parametros.id) ? parametros.id[0] : parametros.id;
@@ -159,6 +160,10 @@ export default function DetalheOcorrenciaScreen() {
           </View>
         ) : ocorrencia ? (
           <>
+            {parametros.registrado === '1' && user?.id === ocorrencia.usuarioId && <View style={styles.successBox} accessibilityLiveRegion="polite">
+              <Text style={styles.eventTitle}>Relato enviado com sucesso</Text>
+              <Text style={styles.body}>O problema já aparece na lista. Acompanhe as próximas atualizações por aqui.</Text>
+            </View>}
             <View style={styles.heading}>
               <Text style={styles.eyebrow}>RELATO DA COMUNIDADE</Text>
               <Text style={[styles.title, ampla && styles.titleWide]} accessibilityRole="header">{ocorrencia.titulo}</Text>
@@ -261,6 +266,7 @@ const explicacaoStatus = {
 };
 
 const makeStyles = (colors: AppColors) => StyleSheet.create({
+  successBox: { backgroundColor: colors.tint, borderRadius: 12, padding: 18, gap: 6, borderWidth: 1, borderColor: colors.border },
   container: { flex: 1, backgroundColor: colors.background },
   scrollContent: { alignItems: "center", flexGrow: 1 },
   content: { width: "100%", maxWidth: 1180, padding: 20, paddingBottom: 40, gap: 24 },

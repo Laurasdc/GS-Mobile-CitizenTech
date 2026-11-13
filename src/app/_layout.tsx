@@ -4,6 +4,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppThemeProvider, appFont, useAppTheme } from '../theme/app-theme';
 import { AccountButton } from '../components/account-button';
 import { AuthProvider } from '../auth/auth-context';
+import { OccurrenceDraftProvider } from '../forms/occurrence-draft';
 
 function Navigation() {
   const { colors, isDark } = useAppTheme();
@@ -15,6 +16,7 @@ function Navigation() {
       contentStyle: { backgroundColor: colors.background }, headerRight: () => <AccountButton /> }}>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="ocorrencias/[id]" options={{ title: 'Detalhes da ocorrência' }} />
+      <Stack.Screen name="registrar" options={{ title: 'Registrar problema' }} />
       <Stack.Screen name="entrar" options={{ title: 'Entrar', headerRight: () => null }} />
       <Stack.Screen name="conta" options={{ title: 'Minha conta', headerRight: () => null }} />
       <Stack.Screen name="appearance" options={{ title: 'Aparência', headerRight: () => null }} />
@@ -22,5 +24,5 @@ function Navigation() {
   </ThemeProvider>;
 }
 export default function RootLayout() {
-  return <SafeAreaProvider><AppThemeProvider><AuthProvider><Navigation /></AuthProvider></AppThemeProvider></SafeAreaProvider>;
+  return <SafeAreaProvider><AppThemeProvider><AuthProvider><OccurrenceDraftProvider><Navigation /></OccurrenceDraftProvider></AuthProvider></AppThemeProvider></SafeAreaProvider>;
 }

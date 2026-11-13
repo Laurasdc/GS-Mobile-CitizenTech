@@ -12,15 +12,15 @@ import {
 const etapas = [
   {
     numero: "01",
-    titulo: "Encontre sua região",
+    titulo: "Registre um problema",
     descricao:
-      "Busque por estado, cidade ou bairro. Você também pode ver todos os relatos.",
+      "Escolha o tipo de problema e informe onde ele acontece.",
   },
   {
     numero: "02",
-    titulo: "Veja o que aconteceu",
+    titulo: "Participe da comunidade",
     descricao:
-      "Abra um relato para entender o problema, o endereço e a situação atual.",
+      "Consulte os relatos e confirme os que também afetam você.",
   },
   {
     numero: "03",
@@ -56,8 +56,13 @@ export default function InicioScreen() {
             </Text>
 
             <Text style={styles.description}>
-              Saiba o que acontece perto de você e acompanhe os problemas dos espaços públicos, em qualquer cidade do Brasil.
+              Registre um problema, participe dos relatos da comunidade e acompanhe o que acontece na sua região.
             </Text>
+            <View style={styles.homeActions}>
+              <Pressable accessibilityRole="button" onPress={() => router.push('/registrar')}
+                style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}>
+                <Text style={styles.primaryButtonText}>Registrar problema</Text>
+              </Pressable>
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Consultar ocorrências por região"
@@ -65,11 +70,13 @@ export default function InicioScreen() {
               onPress={() => router.push("/explore")}
               style={({ pressed }) => [
                 styles.primaryButton,
+                { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.inputBorder },
                 pressed && styles.pressed,
               ]}
             >
-              <Text style={styles.primaryButtonText}>Buscar ocorrências →</Text>
+              <Text style={[styles.primaryButtonText, { color: colors.primary }]}>Buscar ocorrências →</Text>
             </Pressable>
+            </View>
           </View>
 
           <View style={styles.actions}>
@@ -175,6 +182,7 @@ const makeStyles = (colors: AppColors) => StyleSheet.create({
     fontFamily: appFont, fontSize: 16,
     lineHeight: 26,
   },
+  homeActions: { flexDirection: "row", flexWrap: "wrap", gap: 12 },
   actions: {
     gap: 16,
   },

@@ -5,6 +5,7 @@ App em Expo, React Native e TypeScript para consultar problemas nos espaços pú
 ## Funcionalidades
 
 - Listagem pública com filtros de UF, cidade, bairro, categoria e situação.
+- Cadastro de ocorrências com título, categoria, descrição, UF, cidade, bairro e endereço.
 - Detalhes, localização, situação atual e histórico de acompanhamento.
 - Temas claro, escuro neutro e do dispositivo, com preferência salva.
 - Cadastro por nome, e-mail e senha; entrar, consultar sua conta e sair.
@@ -12,7 +13,7 @@ App em Expo, React Native e TypeScript para consultar problemas nos espaços pú
 - Confirmação “Também sou afetado” vinculada à conta autenticada, sem duplicação e sem confirmar seu próprio relato.
 - Interface adaptável a PC e celular, com labels de acessibilidade e mensagens de carregamento/erro.
 
-A consulta não exige conta. O formulário Mobile para registrar novas ocorrências é a próxima etapa; a API já protege esse cadastro.
+A consulta não exige conta. Registrar problemas e confirmar relatos exigem uma sessão. O cadastro usa a identidade autenticada na API, sem pedir um identificador de usuário no formulário.
 
 ## Executar
 
@@ -50,3 +51,15 @@ npx expo export --platform web
 ```
 
 O fluxo web pode ser testado consultando sem login, abrindo um relato de outra pessoa, criando conta, confirmando a ocorrência, recarregando e saindo da conta. O cadastro e o login requerem a API rodando. O SecureStore nativo requer conferência no aparelho.
+
+## Registrar um problema
+
+Use **Registrar problema** no início, na lista ou na sua conta. Quem ainda não entrou pode fazer login ou criar conta e voltar ao formulário. O envio só acontece quando a pessoa toca em **Enviar relato**.
+
+Todos os campos são obrigatórios. Os limites de texto e as categorias seguem o contrato da API. Depois de salvar, o app abre os detalhes com uma confirmação de envio; o relato aparece na lista com a situação **Registrada** e vinculado ao autor da sessão.
+
+O rascunho fica apenas em memória durante a navegação na aba/app, separado por conta. Ele sobrevive à ida ao login quando a sessão termina, mas é perdido ao recarregar a página ou reiniciar o app e é limpo após o envio bem-sucedido. Uma conta diferente não vê o rascunho anterior. Não há gravação automática de endereço no armazenamento local.
+
+Em falha de conexão, os campos são mantidos. Como um envio interrompido pode ter sido processado pela API, a interface oferece conferir a lista antes de reenviar. O botão é bloqueado enquanto há envio em andamento, inclusive para cliques repetidos.
+
+Não há alterações de API, dependências ou migrations nesta atualização. Na validação web, foram conferidos: bloqueio de campos vazios sem chamar a API, login e retorno, sessão expirada com recuperação do rascunho, falha de rede, clique repetido, criação única em SQLite com autor correto, abertura dos detalhes e limpeza do rascunho. O formulário também foi inspecionado em largura de celular no navegador; falta validar o teclado e os controles no aparelho físico.

@@ -1,6 +1,6 @@
 import type { OcorrenciaDetalhe, OcorrenciaResumo } from "../types/ocorrencia";
 
-import { consultarApi } from "./api";
+import { consultarApi, solicitarApi } from "./api";
 
 export interface FiltrosOcorrencias {
   uf?: string;
@@ -53,4 +53,13 @@ export function obterOcorrencia(
     `/ocorrencias/${encodeURIComponent(id)}`,
     signal,
   );
+}
+
+export type CriarOcorrenciaRequest = Pick<OcorrenciaDetalhe,
+  'titulo' | 'descricao' | 'categoria' | 'uf' | 'cidade' | 'bairro' | 'localizacao'>;
+
+export function criarOcorrencia(request: CriarOcorrenciaRequest): Promise<OcorrenciaDetalhe> {
+  return solicitarApi<OcorrenciaDetalhe>('/ocorrencias', {
+    method: 'POST', body: request, autenticado: true,
+  });
 }
