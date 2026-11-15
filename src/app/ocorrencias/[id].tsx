@@ -52,6 +52,7 @@ export default function DetalheOcorrenciaScreen() {
   const parametros = useLocalSearchParams<{
     id?: string | string[];
     registrado?: string;
+    editado?: string;
   }>();
 
   const id = Array.isArray(parametros.id) ? parametros.id[0] : parametros.id;
@@ -160,9 +161,9 @@ export default function DetalheOcorrenciaScreen() {
           </View>
         ) : ocorrencia ? (
           <>
-            {parametros.registrado === '1' && user?.id === ocorrencia.usuarioId && <View style={styles.successBox} accessibilityLiveRegion="polite">
-              <Text style={styles.eventTitle}>Relato enviado com sucesso</Text>
-              <Text style={styles.body}>O problema já aparece na lista. Acompanhe as próximas atualizações por aqui.</Text>
+            {(parametros.registrado === '1' || parametros.editado === '1') && user?.id === ocorrencia.usuarioId && <View style={styles.successBox} accessibilityLiveRegion="polite">
+              <Text style={styles.eventTitle}>{parametros.editado === '1' ? 'Alterações salvas com sucesso' : 'Relato enviado com sucesso'}</Text>
+              <Text style={styles.body}>{parametros.editado === '1' ? 'Os dados do seu relato foram atualizados.' : 'O problema já aparece na lista. Acompanhe as próximas atualizações por aqui.'}</Text>
             </View>}
             <View style={styles.heading}>
               <Text style={styles.eyebrow}>RELATO DA COMUNIDADE</Text>
@@ -172,6 +173,12 @@ export default function DetalheOcorrenciaScreen() {
                 <Text style={styles.categoryText}>{categoriasLabel[ocorrencia.categoria]}</Text>
               </View>
             </View>
+
+            {user?.id === ocorrencia.usuarioId && (ocorrencia.status !== 'Encerrada'
+              ? <Pressable accessibilityRole="button" onPress={() => router.push({ pathname: '/editar/[id]', params: { id: ocorrencia.id } })} style={styles.button}>
+                  <Text style={styles.buttonText}>Editar meu relato</Text>
+                </Pressable>
+              : <Text style={styles.metadata}>Este relato está encerrado e não pode ser editado.</Text>)}
 
             <View style={[styles.columns, ampla && styles.columnsWide]}>
               <View style={styles.mainColumn}>

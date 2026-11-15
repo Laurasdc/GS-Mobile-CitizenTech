@@ -1,4 +1,4 @@
-import type { OcorrenciaDetalhe, OcorrenciaResumo } from "../types/ocorrencia";
+import type { OcorrenciaDetalhe, OcorrenciaResumo, StatusOcorrencia } from "../types/ocorrencia";
 
 import { consultarApi, solicitarApi } from "./api";
 
@@ -61,5 +61,19 @@ export type CriarOcorrenciaRequest = Pick<OcorrenciaDetalhe,
 export function criarOcorrencia(request: CriarOcorrenciaRequest): Promise<OcorrenciaDetalhe> {
   return solicitarApi<OcorrenciaDetalhe>('/ocorrencias', {
     method: 'POST', body: request, autenticado: true,
+  });
+}
+
+export function listarMinhasOcorrencias(signal?: AbortSignal): Promise<OcorrenciaResumo[]> {
+  return solicitarApi<OcorrenciaResumo[]>('/ocorrencias/minhas', { autenticado: true, signal });
+}
+export function editarOcorrencia(id: string, request: CriarOcorrenciaRequest): Promise<OcorrenciaDetalhe> {
+  return solicitarApi<OcorrenciaDetalhe>(`/ocorrencias/${encodeURIComponent(id)}`, {
+    method: 'PUT', body: request, autenticado: true,
+  });
+}
+export function alterarSituacao(id: string, novoStatus: StatusOcorrencia, justificativa: string): Promise<OcorrenciaDetalhe> {
+  return solicitarApi<OcorrenciaDetalhe>(`/ocorrencias/${encodeURIComponent(id)}/status`, {
+    method: 'PATCH', body: { novoStatus, justificativa }, autenticado: true,
   });
 }

@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState, ty
 import { Platform } from 'react-native';
 import { ApiError, setAccessToken, solicitarApi, subscribeSessionExpired } from '../services/api';
 import { loadToken, storeToken, removeToken } from './session-storage';
-export interface Account { id: string; nome: string; email: string }
+export interface Account { id: string; nome: string; email: string; perfil: 'Morador' | 'Gestor' }
 interface Session { usuario: Account; expiraEm: string; token: string | null }
 const Context = createContext<{
   user: Account | null; ready: boolean; error: string | null;

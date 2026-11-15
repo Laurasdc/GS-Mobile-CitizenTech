@@ -16,6 +16,9 @@ function Navigation() {
       contentStyle: { backgroundColor: colors.background }, headerRight: () => <AccountButton /> }}>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="ocorrencias/[id]" options={{ title: 'Detalhes da ocorrência' }} />
+      <Stack.Screen name="editar/[id]" options={{ title: 'Editar relato' }} />
+      <Stack.Screen name="gestao/index" options={{ title: 'Gestão de ocorrências' }} />
+      <Stack.Screen name="gestao/[id]" options={{ title: 'Atualizar situação' }} />
       <Stack.Screen name="registrar" options={{ title: 'Registrar problema' }} />
       <Stack.Screen name="entrar" options={{ title: 'Entrar', headerRight: () => null }} />
       <Stack.Screen name="conta" options={{ title: 'Minha conta', headerRight: () => null }} />

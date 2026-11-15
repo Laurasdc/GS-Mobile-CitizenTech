@@ -7,6 +7,7 @@ App em Expo, React Native e TypeScript para consultar problemas nos espaços pú
 - Listagem pública com filtros de UF, cidade, bairro, categoria e situação.
 - Cadastro de ocorrências com título, categoria, descrição, UF, cidade, bairro e endereço.
 - Detalhes, localização, situação atual e histórico de acompanhamento.
+- Meus relatos: consulta dos registros da sua conta e edição de relatos próprios ainda abertos.
 - Temas claro, escuro neutro e do dispositivo, com preferência salva.
 - Cadastro por nome, e-mail e senha; entrar, consultar sua conta e sair.
 - Retorno ao relato após login solicitado para participar.
@@ -62,4 +63,14 @@ O rascunho fica apenas em memória durante a navegação na aba/app, separado po
 
 Em falha de conexão, os campos são mantidos. Como um envio interrompido pode ter sido processado pela API, a interface oferece conferir a lista antes de reenviar. O botão é bloqueado enquanto há envio em andamento, inclusive para cliques repetidos.
 
-Não há alterações de API, dependências ou migrations nesta atualização. Na validação web, foram conferidos: bloqueio de campos vazios sem chamar a API, login e retorno, sessão expirada com recuperação do rascunho, falha de rede, clique repetido, criação única em SQLite com autor correto, abertura dos detalhes e limpeza do rascunho. O formulário também foi inspecionado em largura de celular no navegador; falta validar o teclado e os controles no aparelho físico.
+O formulário de criação usa o contrato de API existente. Na validação web, foram conferidos: bloqueio de campos vazios sem chamar a API, login e retorno, sessão expirada com recuperação do rascunho, falha de rede, clique repetido, criação única em SQLite com autor correto, abertura dos detalhes e limpeza do rascunho. O formulário também foi inspecionado em largura de celular no navegador; falta validar o teclado e os controles no aparelho físico.
+
+## Meus relatos e edição
+
+Abra **Meus relatos** na navegação inferior ou na sua conta. A lista exige login e consulta um endpoint autenticado específico; ela mostra somente seus registros, incluindo os encerrados. A API precisa incluir `GET /api/ocorrencias/minhas`.
+
+Use **Editar relato** na lista ou **Editar meu relato** nos detalhes. Os campos vêm preenchidos. **Salvar alterações** atualiza a mesma ocorrência sem modificar autor, situação ou confirmações. Relatos encerrados continuam disponíveis para consulta, com edição bloqueada. Acessar diretamente a edição de um relato de outra pessoa também é bloqueado.
+
+O rascunho em memória é separado por conta e por operação: um relato em edição não altera o formulário de novo relato nem outro relato. Se a sessão expirar, faça login na mesma conta para continuar. **Cancelar e voltar aos detalhes** descarta o rascunho daquela edição. Recarregar a página ou reiniciar o app perde os rascunhos não salvos.
+
+Validação web desta atualização: login e retorno à lista, isolamento entre duas contas, preenchimento da edição, um único PUT em clique repetido, atualização da lista, cancelamento, recuperação após expiração e bloqueio de relatos encerrados/de outro autor. O cadastro de novas ocorrências também foi revalidado após compartilhar o formulário. TypeScript, lint e exportação web passaram. O layout foi conferido em largura de celular no navegador; teclado e controles nativos ainda precisam de conferência no aparelho. Não há dependências ou migrations novas.

@@ -1,7 +1,6 @@
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useState, type ReactNode } from 'react';
 import { useAuth } from '../auth/auth-context';
 import type { CategoriaOcorrencia } from '../types/ocorrencia';
-
 export interface OccurrenceFields {
   titulo: string; categoria: CategoriaOcorrencia | ''; descricao: string;
   uf: string; cidade: string; bairro: string; localizacao: string;
@@ -10,27 +9,37 @@ export const emptyFields: OccurrenceFields = {
   titulo: '', categoria: '', descricao: '', uf: '', cidade: '', bairro: '', localizacao: '',
 };
 const Context = createContext<{
-  fields: OccurrenceFields;
-  update: (key: keyof OccurrenceFields, value: string) => void;
-  clear: () => void;
+  drafts: Record<string, OccurrenceFields>;
+  setDraft: (key: string, field: keyof OccurrenceFields, value: string) => void;
+  initialize: (key: string, fields: OccurrenceFields) => void;
+  clear: (key: string) => void;
 } | null>(null);
 
-// Rascunho apenas em memória, identificado pela conta. Sobrevive à ida ao login,
-// sem expor os campos a outra conta ou gravar endereços no armazenamento local.
+// Apenas memória: cada conta e cada operação têm um rascunho independente.
 export function OccurrenceDraftProvider({ children }: { children: ReactNode }) {
-  const { user } = useAuth();
-  const [draft, setDraft] = useState<{ owner: string; fields: OccurrenceFields } | null>(null);
-  const fields = user && draft?.owner === user.id ? draft.fields : emptyFields;
-  function update(key: keyof OccurrenceFields, value: string) {
-    if (!user) return;
-    setDraft(current => ({ owner: user.id, fields: {
-      ...(current?.owner === user.id ? current.fields : emptyFields), [key]: value,
-    } }));
-  }
-  return <Context.Provider value={{ fields, update, clear: () => setDraft(null) }}>{children}</Context.Provider>;
+  const [drafts, setDrafts] = useState<Record<string, OccurrenceFields>>({});
+  const setDraft = useCallback((key: string, field: keyof OccurrenceFields, value: string) => {
+    setDrafts(current => ({ ...current, [key]: { ...(current[key] ?? emptyFields), [field]: value } }));
+  }, []);
+  const initialize = useCallback((key: string, fields: OccurrenceFields) => {
+    setDrafts(current => current[key] ? current : { ...current, [key]: fields });
+  }, []);
+  const clear = useCallback((key: string) => {
+    setDrafts(current => { const next = { ...current }; delete next[key]; return next; });
+  }, []);
+  return <Context.Provider value={{ drafts, setDraft, initialize, clear }}>{children}</Context.Provider>;
 }
-export function useOccurrenceDraft() {
-  const value = useContext(Context);
+export function useOccurrenceDraft(scope = 'novo') {
+  const value = useContext(Context); const { user } = useAuth();
   if (!value) throw new Error('OccurrenceDraftProvider ausente.');
-  return value;
+  const key = user ? `${user.id}:${scope}` : null;
+  const setDraft = value.setDraft; const initializeDraft = value.initialize; const clearDraft = value.clear;
+  const update = useCallback((field: keyof OccurrenceFields, text: string) => {
+    if (key) setDraft(key, field, text);
+  }, [key, setDraft]);
+  const initialize = useCallback((fields: OccurrenceFields) => {
+    if (key) initializeDraft(key, fields);
+  }, [key, initializeDraft]);
+  const clear = useCallback(() => { if (key) clearDraft(key); }, [key, clearDraft]);
+  return { fields: key ? value.drafts[key] ?? emptyFields : emptyFields, update, initialize, clear };
 }

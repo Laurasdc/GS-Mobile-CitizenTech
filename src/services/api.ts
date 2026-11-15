@@ -12,7 +12,7 @@ export class ApiError extends Error {
   constructor(public status: number, message: string) { super(message); }
 }
 export async function solicitarApi<T>(caminho: string, options: {
-  method?: 'GET' | 'POST' | 'PUT'; body?: unknown; signal?: AbortSignal; autenticado?: boolean;
+  method?: 'GET' | 'POST' | 'PUT' | 'PATCH'; body?: unknown; signal?: AbortSignal; autenticado?: boolean;
 } = {}): Promise<T> {
   const requestVersion = sessionVersion;
   const headers: Record<string, string> = { Accept: 'application/json' };

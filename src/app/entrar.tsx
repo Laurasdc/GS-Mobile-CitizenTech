@@ -11,6 +11,13 @@ export default function LoginScreen() {
   const { colors } = useAppTheme(); const styles = authStyles(colors);
   const { user, signIn, ready } = useAuth(); const router = useRouter();
   const { returnTo } = useLocalSearchParams<{ returnTo?: string | string[] }>();
+  const retorno = Array.isArray(returnTo) ? returnTo[0] : returnTo;
+  const loginMessage = retorno === '/registrar' ? 'Entre para registrar um problema. Depois você volta ao formulário para preencher ou revisar seu relato.'
+    : retorno?.startsWith('/gestao') ? 'Entre com uma conta de gestor para acompanhar e atualizar as ocorrências.'
+    : retorno === '/meus' ? 'Entre para consultar os relatos que você registrou com sua conta.'
+    : retorno?.startsWith('/editar/') ? 'Entre para editar seu relato. Depois você volta ao formulário com os campos mantidos.'
+    : retorno ? 'Entre para participar. Depois você volta ao relato e pode confirmar que também é afetado.'
+    : 'Consultar é livre. Entre para registrar problemas e participar da sua comunidade.';
   const [creating, setCreating] = useState(false); const [nome, setNome] = useState('');
   const [email, setEmail] = useState(''); const [senha, setSenha] = useState('');
   const [confirmacao, setConfirmacao] = useState(''); const [visible, setVisible] = useState(false);
@@ -37,7 +44,7 @@ export default function LoginScreen() {
     <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
       <View style={styles.content}>
         <Text style={styles.title} accessibilityRole="header">{creating ? 'Crie sua conta' : 'Que bom ter você aqui'}</Text>
-        <Text style={styles.body}>{returnTo === '/registrar' ? 'Entre para registrar um problema. Depois você volta ao formulário para preencher ou revisar seu relato.' : returnTo ? 'Entre para participar. Depois você volta ao relato e pode confirmar que também é afetado.' : 'Consultar é livre. Entre para registrar problemas e participar da sua comunidade.'}</Text>
+        <Text style={styles.body}>{loginMessage}</Text>
         {user ? <View style={styles.card}>
           <Text style={styles.body}>Você já está conectado como {user.nome}.</Text>
           <Pressable accessibilityRole="button" onPress={() => router.dismissTo(returnPath(returnTo))} style={styles.button}><Text style={styles.buttonText}>Continuar</Text></Pressable>
