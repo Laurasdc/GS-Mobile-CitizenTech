@@ -37,7 +37,7 @@ export default function MyReportsScreen() {
       </View> : <>
         <View style={s.actions}>
           <Pressable accessibilityRole="button" onPress={() => router.push('/registrar')} style={s.button}><Text style={s.buttonText}>Registrar problema</Text></Pressable>
-          <Pressable accessibilityRole="button" disabled={current?.state === 'loading'} onPress={() => setAttempt(v => v + 1)} style={s.linkButton}><Text style={s.link}>Atualizar meus relatos</Text></Pressable>
+          <Pressable accessibilityRole="button" disabled={current?.state === 'loading'} onPress={() => setAttempt(v => v + 1)} style={s.linkButton}><Text style={s.link}>Atualizar lista</Text></Pressable>
         </View>
         {!current || current.state === 'loading' ? <View style={s.card}><ActivityIndicator color={colors.primary} /><Text style={s.body}>Buscando seus relatos…</Text></View>
           : current.state === 'error' ? <View style={s.card}><Text style={s.error} accessibilityRole="alert">{current.error}</Text><Pressable accessibilityRole="button" onPress={() => setAttempt(v => v + 1)} style={s.linkButton}><Text style={s.link}>Tentar novamente</Text></Pressable></View>

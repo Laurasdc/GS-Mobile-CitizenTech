@@ -9,7 +9,6 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  useWindowDimensions,
   View,
 } from "react-native";
 
@@ -28,8 +27,6 @@ export default function OcorrenciasScreen() {
   const { colors } = useAppTheme();
   const router = useRouter();
   const styles = makeStyles(colors);
-  const { width, fontScale } = useWindowDimensions();
-  const telaAmpla = width >= 900 && fontScale < 1.5;
 
   const [moreFilters, setMoreFilters] = useState(false);
   const [uf, setUf] = useState("");
@@ -147,7 +144,7 @@ export default function OcorrenciasScreen() {
             Buscar por região
           </Text>
 
-          <View style={[styles.fields, telaAmpla && styles.fieldsAmplo]}>
+          <View style={styles.fields}>
             <View style={styles.field}>
               <Text style={styles.label}>Estado</Text>
 
@@ -209,15 +206,15 @@ export default function OcorrenciasScreen() {
           </View>
 
           <Text style={styles.helpText}>
-            Preencha apenas o que quiser filtrar. Use os nomes completos de cidade e bairro, com os acentos do cadastro.
+            Campos opcionais. Para distinguir bairros com nomes iguais, informe também a cidade e o estado. Use os nomes completos e os acentos do cadastro.
           </Text>
 
           <Pressable accessibilityRole="button" accessibilityState={{ expanded: moreFilters }}
-            onPress={() => setMoreFilters(value => !value)} style={styles.refreshButton}>
+            onPress={() => setMoreFilters(value => !value)} style={[styles.refreshButton, { alignSelf: 'flex-start', paddingHorizontal: 0 }]}>
             <Text style={styles.secondaryButtonText}>{moreFilters ? '− Ocultar filtros adicionais' : '+ Mais filtros'}{categoria || status ? ' · ativos' : ''}</Text>
           </Pressable>
           {moreFilters && (
-          <View style={[styles.fields, telaAmpla && styles.fieldsAmplo]}>
+          <View style={styles.fields}>
             <View style={styles.field}>
               <Text style={styles.label}>Categoria</Text>
 
@@ -398,7 +395,7 @@ export default function OcorrenciasScreen() {
                     accessibilityLabel={`Ver detalhes: ${ocorrencia.titulo}`}
                     style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]}
                   >
-                    <Text style={styles.secondaryButtonText}>Ver detalhes e atualizações →</Text>
+                    <Text style={[styles.secondaryButtonText, { textAlign: 'left' }]}>Ver detalhes e atualizações →</Text>
                   </Pressable>
                 </Link>
               </View>
@@ -424,10 +421,10 @@ const makeStyles = (colors: AppColors) => StyleSheet.create({
     maxWidth: 1100,
     padding: 24,
     paddingBottom: 40,
-    gap: 24,
+    gap: 16,
   },
   heading: {
-    gap: 14,
+    gap: 10,
   },
   eyebrow: {
     color: colors.primary,
@@ -460,7 +457,7 @@ const makeStyles = (colors: AppColors) => StyleSheet.create({
     fontWeight: "700",
   },
   fields: {
-    gap: 16,
+    flexDirection: "row", flexWrap: "wrap", gap: 16,
   },
   fieldsAmplo: {
     flexDirection: "row",
@@ -469,7 +466,7 @@ const makeStyles = (colors: AppColors) => StyleSheet.create({
   field: {
     flexGrow: 1,
     flexShrink: 1,
-    flexBasis: "auto",
+    flexBasis: 240,
     minWidth: 0,
     gap: 8,
   },
@@ -591,8 +588,8 @@ const makeStyles = (colors: AppColors) => StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: 16,
-    padding: 24,
-    gap: 14,
+    padding: 18,
+    gap: 10,
   },
   badges: {
     flexDirection: "row",

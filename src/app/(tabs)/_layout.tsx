@@ -14,7 +14,7 @@ export default function TabLayout() {
     sceneStyle: { backgroundColor: colors.background },
   }}>
     <Tabs.Screen name="index" options={{ title: 'Bairro em Dia', tabBarLabel: 'Início', tabBarAccessibilityLabel: 'Abrir início' }} />
-    <Tabs.Screen name="explore" options={{ title: 'Ocorrências', tabBarLabel: 'Explorar', tabBarAccessibilityLabel: 'Buscar ocorrências' }} />
+    <Tabs.Screen name="explore" options={{ title: 'Buscar ocorrências', tabBarLabel: 'Buscar ocorrências', tabBarAccessibilityLabel: 'Buscar ocorrências' }} />
     <Tabs.Screen name="meus" options={{ title: 'Meus relatos', tabBarLabel: 'Meus relatos', tabBarAccessibilityLabel: 'Abrir meus relatos' }} />
   </Tabs>;
 }

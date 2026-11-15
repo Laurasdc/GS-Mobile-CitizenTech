@@ -1,281 +1,46 @@
-import { appFont, useAppTheme, type AppColors } from "../../theme/app-theme";
-import { useRouter } from "expo-router";
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  useWindowDimensions,
-  View,
-} from "react-native";
-
-const etapas = [
-  {
-    numero: "01",
-    titulo: "Registre um problema",
-    descricao:
-      "Escolha o tipo de problema e informe onde ele acontece.",
-  },
-  {
-    numero: "02",
-    titulo: "Participe da comunidade",
-    descricao:
-      "Consulte os relatos e confirme os que também afetam você.",
-  },
-  {
-    numero: "03",
-    titulo: "Acompanhe",
-    descricao:
-      "Veja as atualizações em ordem, com a data e o motivo de cada mudança.",
-  },
+import { useRouter } from 'expo-router';
+import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { appFont, useAppTheme, type AppColors } from '../../theme/app-theme';
+const steps = [
+  ['01', 'Registre um problema', 'Informe o que aconteceu e onde o problema está.'],
+  ['02', 'Participe da comunidade', 'Encontre relatos da sua região e confirme os que também afetam você.'],
+  ['03', 'Acompanhe as mudanças', 'Consulte a situação e o histórico com as justificativas da gestão.'],
 ];
-
-export default function InicioScreen() {
-  const { colors } = useAppTheme();
-  const styles = makeStyles(colors);
-  const router = useRouter();
-  const { width, fontScale } = useWindowDimensions();
-
-  const telaAmpla = width >= 900 && fontScale < 1.5;
-
-  return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.scrollContent}
-    >
-      <View style={[styles.content, telaAmpla && styles.contentAmplo]}>
-        <View style={styles.hero}>
-          <View style={styles.introduction}>
-            <Text style={styles.eyebrow}>CUIDADO QUE COMEÇA PERTO</Text>
-
-            <Text
-              accessibilityRole="header"
-              style={[styles.title, telaAmpla && styles.titleAmplo]}
-            >
-              Seu bairro merece atenção.
-            </Text>
-
-            <Text style={styles.description}>
-              Registre um problema, participe dos relatos da comunidade e acompanhe o que acontece na sua região.
-            </Text>
-            <View style={styles.homeActions}>
-              <Pressable accessibilityRole="button" onPress={() => router.push('/registrar')}
-                style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}>
-                <Text style={styles.primaryButtonText}>Registrar problema</Text>
-              </Pressable>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Consultar ocorrências por região"
-              accessibilityHint="Abre a lista com filtros de estado, cidade e bairro"
-              onPress={() => router.push("/explore")}
-              style={({ pressed }) => [
-                styles.primaryButton,
-                { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.inputBorder },
-                pressed && styles.pressed,
-              ]}
-            >
-              <Text style={[styles.primaryButtonText, { color: colors.primary }]}>Buscar ocorrências →</Text>
-            </Pressable>
-            </View>
-          </View>
-
-          <View style={styles.actions}>
-            <View style={styles.regionCard}>
-              <Text style={styles.cardLabel}>UM OLHAR PARA A COMUNIDADE</Text>
-
-              <Text style={styles.regionTitle} accessibilityRole="header">
-                Da sua rua à sua cidade
-              </Text>
-
-              <Text style={styles.cardDescription}>
-                Iluminação, calçadas, buracos e lixo acumulado. Os relatos ficam reunidos em um só lugar.
-              </Text>
-            </View>
-
-
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle} accessibilityRole="header">
-            Como funciona
-          </Text>
-
-          <View style={styles.steps}>
-            {etapas.map((etapa) => (
-              <View
-                key={etapa.numero}
-                style={styles.stepCard}
-              >
-                <Text style={styles.stepNumber}>{etapa.numero}</Text>
-
-                <Text style={styles.stepTitle}>{etapa.titulo}</Text>
-
-                <Text style={styles.stepDescription}>{etapa.descricao}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
+export default function HomeScreen() {
+  const router = useRouter(); const { colors } = useAppTheme(); const s = styles(colors);
+  const { width, fontScale } = useWindowDimensions(); const wide = width >= 900 && fontScale < 1.5;
+  return <ScrollView style={s.page} contentContainerStyle={s.scroll}><View style={s.content}>
+    <View style={s.hero}>
+      <Text style={s.eyebrow}>CUIDADO QUE COMEÇA PERTO</Text>
+      <Text accessibilityRole="header" style={[s.title, wide && s.titleWide]}>Seu bairro merece atenção.</Text>
+      <Text style={s.description}>Registre problemas de iluminação, calçadas, buracos e lixo acumulado. Participe dos relatos e acompanhe as atualizações em qualquer cidade do Brasil.</Text>
+      <View style={s.actions}>
+        <Pressable accessibilityRole="button" onPress={() => router.push('/registrar')} style={({ pressed }) => [s.button, pressed && s.pressed]}><Text style={s.buttonText}>Registrar problema</Text></Pressable>
+        <Pressable accessibilityRole="button" accessibilityLabel="Buscar ocorrências por região" onPress={() => router.push('/explore')} style={({ pressed }) => [s.button, s.secondary, pressed && s.pressed]}><Text style={[s.buttonText, s.link]}>Buscar ocorrências →</Text></Pressable>
       </View>
-    </ScrollView>
-  );
+    </View>
+    <Text accessibilityRole="header" style={s.sectionTitle}>Como funciona</Text>
+    <View style={s.steps}>{steps.map(([number, title, description]) => <View key={number} style={s.step}>
+      <Text style={s.number}>{number}</Text><Text accessibilityRole="header" style={s.stepTitle}>{title}</Text><Text style={s.body}>{description}</Text>
+    </View>)}</View>
+  </View></ScrollView>;
 }
-
-const makeStyles = (colors: AppColors) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    alignItems: "center",
-  },
-  content: {
-    width: "100%",
-    maxWidth: 1120,
-    paddingHorizontal: 24,
-    paddingTop: 28,
-    paddingBottom: 40,
-    gap: 40,
-  },
-  contentAmplo: {
-    paddingHorizontal: 40,
-    paddingTop: 40,
-    paddingBottom: 64,
-    gap: 36,
-  },
-  hero: {
-    padding: 28,
-    borderRadius: 20,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    gap: 28,
-  },
-  heroAmplo: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 48,
-  },
-  introduction: {
-    minWidth: 0,
-    gap: 20,
-  },
-  eyebrow: {
-    color: colors.primary,
-    fontFamily: appFont, fontSize: 12,
-    fontWeight: "700",
-    letterSpacing: 1.5,
-  },
-  title: {
-    color: colors.text,
-    fontFamily: appFont, fontSize: 34,
-    lineHeight: 42,
-    fontWeight: "700",
-  },
-  titleAmplo: {
-    fontFamily: appFont, fontSize: 44,
-    lineHeight: 55,
-  },
-  description: {
-    color: colors.muted,
-    fontFamily: appFont, fontSize: 16,
-    lineHeight: 26,
-  },
-  homeActions: { flexDirection: "row", flexWrap: "wrap", gap: 12 },
-  actions: {
-    gap: 16,
-  },
-  actionsAmplo: {
-    width: 340,
-  },
-  regionCard: {
-    backgroundColor: colors.tint,
-    borderRadius: 16,
-    padding: 24,
-    gap: 12,
-  },
-  cardLabel: {
-    color: colors.tintText,
-    fontFamily: appFont, fontSize: 12,
-    fontWeight: "700",
-    letterSpacing: 1,
-  },
-  regionTitle: {
-    color: colors.text,
-    fontFamily: appFont, fontSize: 26,
-    lineHeight: 34,
-    fontWeight: "700",
-  },
-  cardDescription: {
-    color: colors.tintText,
-    fontFamily: appFont, fontSize: 14,
-    lineHeight: 23,
-  },
-  primaryButton: {
-    alignSelf: "flex-start",
-    minHeight: 56,
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderRadius: 16,
-    backgroundColor: colors.primary,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  primaryButtonText: {
-    color: colors.onPrimary,
-    fontFamily: appFont, fontSize: 16,
-    fontWeight: "700",
-    textAlign: "center",
-  },
-  pressed: {
-    opacity: 0.8,
-  },
-  section: {
-    gap: 20,
-  },
-  sectionTitle: {
-    color: colors.text,
-    fontFamily: appFont, fontSize: 24,
-    fontWeight: "700",
-  },
-  steps: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 16,
-  },
-  stepsAmplo: {
-    flexDirection: "row",
-    alignItems: "stretch",
-  },
-  stepCard: {
-    flexGrow: 1,
-    flexBasis: 260,
-    minWidth: 0,
-    backgroundColor: colors.surface,
-    borderRadius: 16,
-    padding: 24,
-    gap: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  stepCardAmplo: {
-    flex: 1,
-    minWidth: 0,
-  },
-  stepNumber: {
-    color: colors.primary,
-    fontFamily: appFont, fontSize: 25,
-    fontWeight: "700",
-  },
-  stepTitle: {
-    color: colors.text,
-    fontFamily: appFont, fontSize: 18,
-    fontWeight: "700",
-  },
-  stepDescription: {
-    color: colors.muted,
-    fontFamily: appFont, fontSize: 15,
-    lineHeight: 24,
-  },
+const styles = (c: AppColors) => StyleSheet.create({
+  page: { flex: 1, backgroundColor: c.background }, scroll: { alignItems: 'center', flexGrow: 1 },
+  content: { width: '100%', maxWidth: 1100, padding: 24, paddingBottom: 40, gap: 20 },
+  hero: { backgroundColor: c.surface, borderWidth: 1, borderColor: c.border, borderRadius: 18, padding: 24, gap: 16 },
+  eyebrow: { fontFamily: appFont, color: c.primary, fontSize: 12, fontWeight: '700', letterSpacing: 1.5 },
+  title: { fontFamily: appFont, color: c.text, fontSize: 32, lineHeight: 40, fontWeight: '700' },
+  titleWide: { fontSize: 38, lineHeight: 46 },
+  description: { fontFamily: appFont, color: c.muted, maxWidth: 850, fontSize: 16, lineHeight: 25 },
+  actions: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
+  button: { backgroundColor: c.primary, minHeight: 48, borderRadius: 12, paddingVertical: 12, paddingHorizontal: 20, justifyContent: 'center', alignItems: 'center' },
+  buttonText: { fontFamily: appFont, color: c.onPrimary, fontSize: 15, fontWeight: '700' },
+  secondary: { backgroundColor: c.surface, borderWidth: 1, borderColor: c.inputBorder }, link: { color: c.primary },
+  sectionTitle: { fontFamily: appFont, color: c.text, fontSize: 23, fontWeight: '700' },
+  steps: { flexDirection: 'row', flexWrap: 'wrap', gap: 16 },
+  step: { flexGrow: 1, flexBasis: 260, minWidth: 0, backgroundColor: c.surface, borderWidth: 1, borderColor: c.border, borderRadius: 16, padding: 20, gap: 10 },
+  number: { fontFamily: appFont, color: c.primary, fontSize: 24, fontWeight: '700' },
+  stepTitle: { fontFamily: appFont, color: c.text, fontSize: 18, fontWeight: '700' },
+  body: { fontFamily: appFont, color: c.muted, fontSize: 15, lineHeight: 23 }, pressed: { opacity: 0.7 },
 });

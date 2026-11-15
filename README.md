@@ -41,7 +41,7 @@ Crie uma conta do **Bairro em Dia** pelo botão Entrar → Criar conta. Ela é i
 
 No navegador, a sessão usa cookie HttpOnly e o token não é exposto ao JavaScript nem armazenado no AsyncStorage. No app nativo, o token é salvo no Expo SecureStore. A sessão expira em 8 horas e o logout a revoga na API. A preferência de aparência continua salva ao sair.
 
-As senhas não são armazenadas pelo app. Não há recuperação de senha, verificação de e-mail ou login social nesta etapa. Alterar status é uma operação do perfil Gestor na API; o cadastro público concede somente o perfil Morador.
+As senhas não são armazenadas pelo app. Recuperação de senha, verificação de e-mail e login social não estão incluídos nesta versão. Alterar status é uma operação do perfil Gestor na API; o cadastro público concede somente o perfil Morador.
 
 ## Validação
 
@@ -74,3 +74,11 @@ Use **Editar relato** na lista ou **Editar meu relato** nos detalhes. Os campos 
 O rascunho em memória é separado por conta e por operação: um relato em edição não altera o formulário de novo relato nem outro relato. Se a sessão expirar, faça login na mesma conta para continuar. **Cancelar e voltar aos detalhes** descarta o rascunho daquela edição. Recarregar a página ou reiniciar o app perde os rascunhos não salvos.
 
 Validação web desta atualização: login e retorno à lista, isolamento entre duas contas, preenchimento da edição, um único PUT em clique repetido, atualização da lista, cancelamento, recuperação após expiração e bloqueio de relatos encerrados/de outro autor. O cadastro de novas ocorrências também foi revalidado após compartilhar o formulário. TypeScript, lint e exportação web passaram. O layout foi conferido em largura de celular no navegador; teclado e controles nativos ainda precisam de conferência no aparelho. Não há dependências ou migrations novas.
+
+## Revisão visual da web
+
+A apresentação inicial foi reduzida para mostrar os três passos mais cedo. A navegação usa **Buscar ocorrências**. A lista e a gestão têm espaçamentos menores; **Atualizar lista** evita confusão com editar um relato. A conta apresenta descrições dos atalhos e uma ação principal por perfil; gestores também têm um atalho no cabeçalho. O formulário usa duas colunas em telas largas e uma coluna nas menores, com campo de endereço mais baixo.
+
+A recuperação de senha foi removida da interface e da API. O botão e as duas telas não fazem parte da versão atual. Os ajustes visuais acima foram preservados. Login e cadastro continuam usando as credenciais existentes; a remoção não troca senhas ou encerra sessões por si só.
+
+Validação da remoção: TypeScript, lint e exportação web, suíte de 48 testes da API e verificação de que os endpoints antigos retornam 404. A revisão no celular físico continua reservada para a etapa final.

@@ -23,6 +23,7 @@ export default function OccurrenceFormScreen({ occurrenceId }: { occurrenceId?: 
   const loadKey = `${userId}:${occurrenceId}`;
   const currentLoad = load?.key === loadKey ? load : null;
   const { width, fontScale } = useWindowDimensions(); const wide = width >= 800 && fontScale < 1.5;
+  const columns = width >= 1180 && fontScale < 1.5;
   const [errors, setErrors] = useState<FieldErrors>({});
   const [message, setMessage] = useState<string | null>(null);
   const [uncertain, setUncertain] = useState(false);
@@ -98,8 +99,8 @@ export default function OccurrenceFormScreen({ occurrenceId }: { occurrenceId?: 
       <Text style={s.label}>{label}</Text>
       <TextInput ref={node => { inputs.current[key] = node; }} accessibilityLabel={label} accessibilityHint={errors[key]} value={fields[key]}
         onChangeText={value => change(key, value)} placeholder={placeholder} placeholderTextColor={colors.subtle}
-        maxLength={max} multiline={multiline} numberOfLines={multiline ? 4 : 1} editable={!saving}
-        autoCapitalize="sentences" style={[s.input, multiline && s.multiline, !!errors[key] && s.invalid]} />
+        maxLength={max} multiline={multiline} numberOfLines={key === 'localizacao' ? 2 : multiline ? 4 : 1} editable={!saving}
+        autoCapitalize="sentences" style={[s.input, multiline && s.multiline, key === 'localizacao' && s.addressInput, !!errors[key] && s.invalid]} />
       {errors[key] && <Text style={s.error}>{errors[key]}</Text>}
       {(key === 'titulo' || key === 'descricao') && <Text style={s.helper}>{fields[key].length}/{max} caracteres</Text>}
     </View>;
@@ -127,7 +128,8 @@ export default function OccurrenceFormScreen({ occurrenceId }: { occurrenceId?: 
             </>}
         </View> : <>
           <View style={s.account}><Text style={s.body}>{editing ? 'Editando como ' : 'Registrando como '}<Text style={s.accountName}>{user.nome}</Text></Text></View>
-          <View style={s.card}>
+          <View style={[s.formSections, { flexDirection: columns ? 'row' : 'column' }]}>
+          <View style={[s.card, s.formCard, columns && { flexBasis: 0 }]}>
             <Text accessibilityRole="header" style={s.sectionTitle}>1. Sobre o problema</Text>
             {input('titulo', 'Título do problema', 'Ex.: poste apagado perto do ponto de ônibus', 120)}
             <View style={s.field}>
@@ -143,10 +145,10 @@ export default function OccurrenceFormScreen({ occurrenceId }: { occurrenceId?: 
             </View>
             {input('descricao', 'O que está acontecendo?', 'Descreva o problema e como ele afeta o local.', 2000, true)}
           </View>
-          <View style={s.card}>
+          <View style={[s.card, s.formCard, columns && { flexBasis: 0 }]}>
             <Text accessibilityRole="header" style={s.sectionTitle}>2. Onde aconteceu?</Text>
-            <View style={[s.row, { flexDirection: wide ? 'row' : 'column' }]}>
-              <View style={s.field}>
+            <View style={[s.row, { flexDirection: wide ? 'row' : 'column', flexWrap: 'wrap' }]}>
+              <View style={[s.field, wide && { flexBasis: 200 }]}>
                 <Text style={s.label}>Estado</Text>
                 <View style={[s.pickerBox, !!errors.uf && s.invalid]}>
                   <Picker accessibilityLabel="Estado da ocorrência" enabled={!saving} selectedValue={fields.uf}
@@ -162,6 +164,7 @@ export default function OccurrenceFormScreen({ occurrenceId }: { occurrenceId?: 
             </View>
             {input('localizacao', 'Endereço ou ponto de referência', 'Ex.: Rua das Flores, em frente ao número 100', 250, true)}
             <Text style={s.helper}>Informe o local do problema. Evite incluir dados pessoais na descrição ou no endereço.</Text>
+          </View>
           </View>
           <View style={s.card}>
             <Text style={s.body}>{editing ? 'A edição corrige os dados do relato. A situação, as confirmações e o histórico de acompanhamento são mantidos.' : 'Ao enviar, o relato aparece na lista com a situação “Registrada”. Você poderá acompanhar as atualizações nos detalhes.'}</Text>
@@ -182,11 +185,13 @@ export default function OccurrenceFormScreen({ occurrenceId }: { occurrenceId?: 
 const styles = (c: AppColors) => StyleSheet.create({
   page: { flex: 1, backgroundColor: c.background },
   scroll: { alignItems: 'center', padding: 20, paddingBottom: 48 },
-  content: { width: '100%', maxWidth: 900, gap: 20, paddingVertical: 12 },
+  content: { width: '100%', maxWidth: 1100, gap: 16, paddingVertical: 12 },
   title: { fontFamily: appFont, color: c.text, fontWeight: '700', fontSize: 30, lineHeight: 38 },
   body: { fontFamily: appFont, color: c.muted, fontSize: 15, lineHeight: 24 },
   sectionTitle: { fontFamily: appFont, color: c.text, fontWeight: '700', fontSize: 20, lineHeight: 28 },
   card: { padding: 22, backgroundColor: c.surface, borderWidth: 1, borderColor: c.border, borderRadius: 16, gap: 20 },
+  formSections: { gap: 16, alignItems: 'stretch' }, formCard: { flexGrow: 1, flexShrink: 1, flexBasis: 'auto', minWidth: 0 },
+  addressInput: { minHeight: 76 },
   account: { backgroundColor: c.tint, borderRadius: 10, padding: 14 },
   accountName: { fontWeight: '700', color: c.text },
   row: { gap: 16 }, field: { flexGrow: 1, flexShrink: 1, minWidth: 0, flexBasis: 'auto', gap: 8 },
