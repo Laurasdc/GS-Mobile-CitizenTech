@@ -1,5 +1,5 @@
 import { appFont, useAppTheme, type AppColors } from "../../theme/app-theme";
-import { Picker } from "@react-native-picker/picker";
+import { Picker } from "../../components/compact-picker";
 import { Link, useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import {

@@ -285,7 +285,7 @@ const makeStyles = (colors: AppColors) => StyleSheet.create({
   location: { color: colors.muted, fontFamily: appFont, fontSize: 16, lineHeight: 25 },
   categoryBadge: { alignSelf: "flex-start", backgroundColor: colors.tint, borderRadius: 8, paddingHorizontal: 12, paddingVertical: 7 },
   categoryText: { color: colors.tintText, fontFamily: appFont, fontSize: 13, fontWeight: "600" },
-  columns: { gap: 20, flexDirection: "column-reverse" },
+  columns: { gap: 20, flexDirection: "column" },
   columnsWide: { flexDirection: "row", alignItems: "flex-start", gap: 24 },
   mainColumn: { flex: 1, minWidth: 0, gap: 20 },
   summaryColumn: { gap: 20 },

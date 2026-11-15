@@ -1,4 +1,4 @@
-import { Picker } from '@react-native-picker/picker';
+import { Picker } from '../components/compact-picker';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
 import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
@@ -147,7 +147,7 @@ export default function OccurrenceFormScreen({ occurrenceId }: { occurrenceId?: 
           </View>
           <View style={[s.card, s.formCard, columns && { flexBasis: 0 }]}>
             <Text accessibilityRole="header" style={s.sectionTitle}>2. Onde aconteceu?</Text>
-            <View style={[s.row, { flexDirection: wide ? 'row' : 'column', flexWrap: 'wrap' }]}>
+            <View style={[s.row, { flexDirection: wide ? 'row' : 'column', flexWrap: wide ? 'wrap' : 'nowrap' }]}>
               <View style={[s.field, wide && { flexBasis: 200 }]}>
                 <Text style={s.label}>Estado</Text>
                 <View style={[s.pickerBox, !!errors.uf && s.invalid]}>

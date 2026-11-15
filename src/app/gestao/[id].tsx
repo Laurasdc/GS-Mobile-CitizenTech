@@ -1,4 +1,4 @@
-import { Picker } from "@react-native-picker/picker";
+import { Picker } from "../../components/compact-picker";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useRef, useState } from "react";
 import {
@@ -262,7 +262,7 @@ export default function UpdateStatusScreen() {
                     enabled={!busy}
                     selectedValue={selection}
                     onValueChange={(value) => {
-                      setDraft({ ...currentDraft, status: value });
+                      setDraft({ ...currentDraft, status: value as StatusOcorrencia });
                       setMessage(null);
                     }}
                     style={{

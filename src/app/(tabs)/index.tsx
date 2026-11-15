@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { Platform, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { appFont, useAppTheme, type AppColors } from '../../theme/app-theme';
 const steps = [
   ['01', 'Registre um problema', 'Informe o que aconteceu e onde o problema está.'],
@@ -10,10 +10,10 @@ export default function HomeScreen() {
   const router = useRouter(); const { colors } = useAppTheme(); const s = styles(colors);
   const { width, fontScale } = useWindowDimensions(); const wide = width >= 900 && fontScale < 1.5;
   return <ScrollView style={s.page} contentContainerStyle={s.scroll}><View style={s.content}>
-    <View style={s.hero}>
+    <View style={[s.hero, Platform.OS !== 'web' && { padding: 18, gap: 12 }]}>
       <Text style={s.eyebrow}>CUIDADO QUE COMEÇA PERTO</Text>
       <Text accessibilityRole="header" style={[s.title, wide && s.titleWide]}>Seu bairro merece atenção.</Text>
-      <Text style={s.description}>Registre problemas de iluminação, calçadas, buracos e lixo acumulado. Participe dos relatos e acompanhe as atualizações em qualquer cidade do Brasil.</Text>
+      <Text style={s.description}>{Platform.OS === 'web' ? 'Registre problemas de iluminação, calçadas, buracos e lixo acumulado. Participe dos relatos e acompanhe as atualizações em qualquer cidade do Brasil.' : 'Registre problemas e acompanhe os relatos da comunidade, em qualquer cidade do Brasil.'}</Text>
       <View style={s.actions}>
         <Pressable accessibilityRole="button" onPress={() => router.push('/registrar')} style={({ pressed }) => [s.button, pressed && s.pressed]}><Text style={s.buttonText}>Registrar problema</Text></Pressable>
         <Pressable accessibilityRole="button" accessibilityLabel="Buscar ocorrências por região" onPress={() => router.push('/explore')} style={({ pressed }) => [s.button, s.secondary, pressed && s.pressed]}><Text style={[s.buttonText, s.link]}>Buscar ocorrências →</Text></Pressable>
