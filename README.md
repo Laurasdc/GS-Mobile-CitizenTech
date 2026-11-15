@@ -1,93 +1,133 @@
-# Bairro em Dia — Mobile
+# Bairro em Dia
 
-App em Expo, React Native e TypeScript para consultar problemas nos espaços públicos de bairros de qualquer cidade do Brasil.
+Aplicativo para registrar problemas nos espaços públicos e acompanhar os relatos da comunidade em cidades de todo o Brasil. A proposta é aproximar moradores e gestão, reunindo informações sobre problemas do bairro e tornando seu acompanhamento mais claro.
 
 ## Integrantes
 
-| Nome              | RM     |
-| ----------------- | ------ |
-| Laura Souza       | 556320 |
+| Nome | RM |
+| --- | --- |
+| Laura Souza | 556320 |
 | Vinicius Henrique | 556908 |
-| Gustavo Pierre    | 558928 |
-| Gabriel Belo      | 551669 |
+| Gustavo Pierre | 558928 |
+| Gabriel Belo | 551669 |
+
+## Tecnologias utilizadas
+
+| Tecnologia | Utilização |
+| --- | --- |
+| Expo e React Native | Desenvolvimento do aplicativo para celular e navegador. |
+| TypeScript | Tipagem do código. |
+| Expo Router | Navegação entre telas. |
+| React Native Web | Execução da interface no navegador. |
+| Expo SecureStore | Armazenamento da sessão no aplicativo nativo. |
+| AsyncStorage | Persistência da preferência de aparência. |
+| API REST em ASP.NET Core | Autenticação e operações de usuários e ocorrências. |
+| Entity Framework Core e SQLite | Persistência dos dados no backend. |
 
 ## Funcionalidades
 
-- Listagem pública com filtros de UF, cidade, bairro, categoria e situação.
-- Cadastro de ocorrências com título, categoria, descrição, UF, cidade, bairro e endereço.
-- Detalhes, localização, situação atual e histórico de acompanhamento.
-- Meus relatos: consulta dos registros da sua conta e edição de relatos próprios ainda abertos.
-- Temas claro, escuro neutro e do dispositivo, com preferência salva.
-- Cadastro por nome, e-mail e senha; entrar, consultar sua conta e sair.
-- Retorno ao relato após login solicitado para participar.
-- Confirmação “Também sou afetado” vinculada à conta autenticada, sem duplicação e sem confirmar seu próprio relato.
-- Interface adaptável a PC e celular, com labels de acessibilidade e mensagens de carregamento/erro.
+### Consulta e participação
 
-A consulta não exige conta. Registrar problemas e confirmar relatos exigem uma sessão. O cadastro usa a identidade autenticada na API, sem pedir um identificador de usuário no formulário.
+- Consultar ocorrências da comunidade sem precisar entrar em uma conta.
+- Filtrar relatos por estado, cidade, bairro, categoria e situação.
+- Visualizar a descrição, a localização, a situação atual e o histórico de atualizações de uma ocorrência.
+- Criar uma conta, entrar, consultar os dados do perfil e sair.
+- Registrar problemas de iluminação, lixo acumulado, buracos e calçadas danificadas.
+- Confirmar que também é afetado por uma ocorrência de outro morador.
+- Consultar os próprios registros em **Meus relatos** e editar suas informações enquanto estiverem abertos.
 
-## Executar
+### Gestão de ocorrências
 
-Requer Node compatível com Expo SDK 58 e a API C# atualizada, com a migration `AdicionaAutenticacao` aplicada.
+Contas com perfil **Gestor** têm acesso à área de gerenciamento para:
+
+- Buscar ocorrências por título ou região e filtrar por situação.
+- Atualizar a situação para **Registrada**, **Em análise**, **Em acompanhamento** ou **Encerrada**, conforme as transições permitidas.
+- Informar uma justificativa que fica disponível no histórico para os moradores.
+- Reabrir uma ocorrência encerrada para análise quando necessário.
+
+### Interface
+
+- Layout adaptado para celular e navegador.
+- Temas claro, escuro e do dispositivo, com preferência salva.
+
+## Telas do aplicativo
+
+Prints do aplicativo no iPhone, no tema escuro.
+
+| Início | Busca de ocorrências | Registro de problema |
+| --- | --- | --- |
+| <img src="docs/images/inicio.png" alt="Tela inicial do Bairro em Dia" width="260"> | <img src="docs/images/busca.png" alt="Busca de ocorrências por estado, cidade e bairro" width="260"> | <img src="docs/images/registro.png" alt="Formulário para registrar um problema" width="260"> |
+
+## Como executar
+
+### Pré-requisitos
+
+- Node.js compatível com o Expo SDK 58 e npm.
+- API do Bairro em Dia configurada, com o banco de dados atualizado e em execução.
+- Expo Go compatível com o projeto para testar no celular, ou um navegador para a versão web.
+
+O backend está no repositório [GS-C-CitizenTech](https://github.com/Laurasdc/GS-C-CitizenTech). Siga as instruções dele para configurar e iniciar a API.
+
+### 1. Obter o projeto e instalar as dependências
+
+```powershell
+git clone https://github.com/Laurasdc/GS-Mobile-CitizenTech.git
+cd GS-Mobile-CitizenTech
+```
+
+Entre na pasta que contém o arquivo `package.json` do aplicativo e execute:
 
 ```powershell
 npm install
-npx expo start --clear
 ```
 
-Pressione `w` no terminal do Expo para abrir a versão web. A URL local esperada é `http://localhost:8081`, permitida no CORS e na validação de origem da API.
+### 2. Configurar a conexão com a API
 
-A API padrão é `http://localhost:5239/api`. Para usar outro endereço, crie `.env.local`:
+Na mesma pasta do `package.json`, crie o arquivo `.env.local` com o endereço da API:
 
 ```dotenv
-EXPO_PUBLIC_API_URL=http://SEU_IP_LOCAL:5239/api
+EXPO_PUBLIC_API_URL=http://localhost:5239/api
 ```
 
-Essa variável é pública e contém somente a URL, nunca senhas/tokens. No iPhone, `localhost` aponta para o próprio aparelho: use o IP do PC, com API acessível na rede e ambos conectados à mesma rede. A URL deve terminar em `/api`. Reinicie o Expo após mudar a variável.
+Esse endereço serve para usar o navegador no próprio computador. Para acessar pelo celular, substitua `localhost` pelo IPv4 do computador, por exemplo:
 
-## Conta e sessão
+```dotenv
+EXPO_PUBLIC_API_URL=http://192.168.1.10:5239/api
+```
 
-Crie uma conta do **Bairro em Dia** pelo botão Entrar → Criar conta. Ela é independente da conta do Expo. Os usuários antigos de demonstração da API não possuem senha.
-
-No navegador, a sessão usa cookie HttpOnly e o token não é exposto ao JavaScript nem armazenado no AsyncStorage. No app nativo, o token é salvo no Expo SecureStore. A sessão expira em 8 horas e o logout a revoga na API. A preferência de aparência continua salva ao sair.
-
-As senhas não são armazenadas pelo app. Recuperação de senha, verificação de e-mail e login social não estão incluídos nesta versão. Alterar status é uma operação do perfil Gestor na API; o cadastro público concede somente o perfil Morador.
-
-## Validação
+No Windows, consulte o IPv4 da conexão ativa com:
 
 ```powershell
-npx tsc --noEmit
-npx expo lint
-npx expo export --platform web
+ipconfig
 ```
 
-O fluxo web pode ser testado consultando sem login, abrindo um relato de outra pessoa, criando conta, confirmando a ocorrência, recarregando e saindo da conta. O cadastro e o login requerem a API rodando. O SecureStore nativo requer conferência no aparelho.
+Para o teste no celular, conecte os dois dispositivos à mesma rede Wi-Fi e deixe a API acessível pela rede local. Na pasta do backend, você pode iniciá-la com:
 
-## Registrar um problema
+```powershell
+dotnet run --project BairroEmDia.Api --launch-profile http -- --urls http://0.0.0.0:5239
+```
 
-Use **Registrar problema** no início, na lista ou na sua conta. Quem ainda não entrou pode fazer login ou criar conta e voltar ao formulário. O envio só acontece quando a pessoa toca em **Enviar relato**.
+O endereço no `.env.local` deve terminar em `/api`. Reinicie o Expo sempre que alterar essa configuração.
 
-Todos os campos são obrigatórios. Os limites de texto e as categorias seguem o contrato da API. Depois de salvar, o app abre os detalhes com uma confirmação de envio; o relato aparece na lista com a situação **Registrada** e vinculado ao autor da sessão.
+### 3. Iniciar o aplicativo
 
-O rascunho fica apenas em memória durante a navegação na aba/app, separado por conta. Ele sobrevive à ida ao login quando a sessão termina, mas é perdido ao recarregar a página ou reiniciar o app e é limpo após o envio bem-sucedido. Uma conta diferente não vê o rascunho anterior. Não há gravação automática de endereço no armazenamento local.
+```powershell
+npx expo start --go --clear
+```
 
-Em falha de conexão, os campos são mantidos. Como um envio interrompido pode ter sido processado pela API, a interface oferece conferir a lista antes de reenviar. O botão é bloqueado enquanto há envio em andamento, inclusive para cliques repetidos.
+- **Celular:** abra o projeto no Expo Go usando o QR Code exibido no terminal.
+- **Navegador:** pressione `w` no terminal. O endereço padrão é `http://localhost:8081`.
 
-O formulário de criação usa o contrato de API existente. Na validação web, foram conferidos: bloqueio de campos vazios sem chamar a API, login e retorno, sessão expirada com recuperação do rascunho, falha de rede, clique repetido, criação única em SQLite com autor correto, abertura dos detalhes e limpeza do rascunho. O formulário também foi inspecionado em largura de celular no navegador; falta validar o teclado e os controles no aparelho físico.
+Mantenha a API em execução durante o uso. Se utilizar outro endereço ou porta na versão web, ajuste também as origens permitidas no backend.
 
-## Meus relatos e edição
+## Como usar o aplicativo
 
-Abra **Meus relatos** na navegação inferior ou na sua conta. A lista exige login e consulta um endpoint autenticado específico; ela mostra somente seus registros, incluindo os encerrados. A API precisa incluir `GET /api/ocorrencias/minhas`.
+1. Na tela **Início**, escolha **Buscar ocorrências** para consultar os relatos da comunidade.
+2. Preencha os filtros desejados ou consulte todas as localidades.
+3. Abra uma ocorrência para ver os detalhes e o histórico de acompanhamento.
+4. Para participar, use **Entrar** ou **Conta** e crie sua conta do Bairro em Dia.
+5. Escolha **Registrar problema**, preencha as informações e toque em **Enviar relato**.
+6. Acompanhe e edite seus registros em **Meus relatos**. Nos relatos de outras pessoas, use **Também sou afetado** quando o problema também afetar você.
+7. Para mudar a aparência, use o controle de tema no cabeçalho.
 
-Use **Editar relato** na lista ou **Editar meu relato** nos detalhes. Os campos vêm preenchidos. **Salvar alterações** atualiza a mesma ocorrência sem modificar autor, situação ou confirmações. Relatos encerrados continuam disponíveis para consulta, com edição bloqueada. Acessar diretamente a edição de um relato de outra pessoa também é bloqueado.
-
-O rascunho em memória é separado por conta e por operação: um relato em edição não altera o formulário de novo relato nem outro relato. Se a sessão expirar, faça login na mesma conta para continuar. **Cancelar e voltar aos detalhes** descarta o rascunho daquela edição. Recarregar a página ou reiniciar o app perde os rascunhos não salvos.
-
-Validação web desta atualização: login e retorno à lista, isolamento entre duas contas, preenchimento da edição, um único PUT em clique repetido, atualização da lista, cancelamento, recuperação após expiração e bloqueio de relatos encerrados/de outro autor. O cadastro de novas ocorrências também foi revalidado após compartilhar o formulário. TypeScript, lint e exportação web passaram. O layout foi conferido em largura de celular no navegador; teclado e controles nativos ainda precisam de conferência no aparelho. Não há dependências ou migrations novas.
-
-## Revisão visual da web
-
-A apresentação inicial foi reduzida para mostrar os três passos mais cedo. A navegação usa **Buscar ocorrências**. A lista e a gestão têm espaçamentos menores; **Atualizar lista** evita confusão com editar um relato. A conta apresenta descrições dos atalhos e uma ação principal por perfil; gestores também têm um atalho no cabeçalho. O formulário usa duas colunas em telas largas e uma coluna nas menores, com campo de endereço mais baixo.
-
-A recuperação de senha foi removida da interface e da API. O botão e as duas telas não fazem parte da versão atual. Os ajustes visuais acima foram preservados. Login e cadastro continuam usando as credenciais existentes; a remoção não troca senhas ou encerra sessões por si só.
-
-Validação da remoção: TypeScript, lint e exportação web, suíte de 48 testes da API e verificação de que os endpoints antigos retornam 404. A revisão no celular físico continua reservada para a etapa final.
+O cadastro público cria um perfil **Morador**. Quem já possui uma conta habilitada como **Gestor** pode acessar **Gerenciar ocorrências** pela tela **Minha conta**.
