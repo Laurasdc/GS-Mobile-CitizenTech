@@ -2,6 +2,15 @@
 
 App em Expo, React Native e TypeScript para consultar problemas nos espaços públicos de bairros de qualquer cidade do Brasil.
 
+## Integrantes
+
+| Nome              | RM     |
+| ----------------- | ------ |
+| Laura Souza       | 556320 |
+| Vinicius Henrique | 556908 |
+| Gustavo Pierre    | 558928 |
+| Gabriel Belo      | 551669 |
+
 ## Funcionalidades
 
 - Listagem pública com filtros de UF, cidade, bairro, categoria e situação.
