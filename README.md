@@ -2,6 +2,27 @@
 
 Aplicativo para registrar problemas nos espaços públicos e acompanhar os relatos da comunidade em cidades de todo o Brasil. A proposta é aproximar moradores e gestão, reunindo informações sobre problemas do bairro e tornando seu acompanhamento mais claro.
 
+## Ficha da CitizenTech
+
+| Campo | Descrição |
+| --- | --- |
+| Nome da CitizenTech | Bairro em Dia. |
+| Cidade e bairro | Cadastro disponível para cidades e bairros de todo o Brasil. O cenário de demonstração inclui Chácara Klabin, São Paulo/SP. |
+| Cidadão beneficiado | Moradores que precisam registrar problemas nos espaços públicos e acompanhar seu andamento, incluindo pessoas afetadas por calçadas danificadas e falta de iluminação. |
+| Problema, em uma frase | Relatos dispersos e falta de visibilidade sobre o acompanhamento de problemas de manutenção dos espaços públicos. |
+| Como funciona | O morador consulta ou registra uma ocorrência, outras pessoas confirmam que também são afetadas e o gestor atualiza a situação com justificativas disponíveis no histórico. |
+| O que cada parte faz | Mobile: interface dos moradores e gestores; C#: autenticação, ocorrências, confirmações e histórico em SQLite; SOA em Java: consulta C# por HTTP e armazena análises agregadas em PostgreSQL. |
+| Participantes do ecossistema | Moradores e gestores da comunidade. Órgãos e prestadores de manutenção são possíveis destinatários de encaminhamentos futuros. |
+| Repositórios | [Mobile](https://github.com/Laurasdc/GS-Mobile-CitizenTech) e [API C# e integração SOA](https://github.com/Laurasdc/GS-C-CitizenTech). |
+| Indicadores de acompanhamento e impacto | Quantidade de relatos, distribuição por categoria e situação, confirmações de moradores e proporção de relatos encerrados. A consulta por região e as análises salvas permitem acompanhar diferentes localidades e momentos. |
+| ODS conectados | [ODS 11 — Cidades e comunidades sustentáveis](https://brasil.un.org/pt-br/sdgs/11): contribuição proposta às metas 11.3 e 11.7 por meio da participação dos moradores e da identificação de problemas que prejudicam o uso seguro e acessível dos espaços públicos. |
+
+O projeto é um protótipo acadêmico. Os indicadores refletem registros do sistema; o encerramento de um relato não comprova a execução de manutenção real. Não há envio automático de solicitações à Prefeitura.
+
+## Vídeo de demonstração
+
+[Assista ao aplicativo em funcionamento](https://youtube.com/shorts/rhYkBh2buLQ)
+
 ## Integrantes
 
 | Nome | RM |
